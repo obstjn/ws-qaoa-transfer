@@ -1,0 +1,5 @@
+QTensor/
+__pycache__/
+ws-energies/
+
+out.log

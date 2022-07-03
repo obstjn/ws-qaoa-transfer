@@ -3,31 +3,37 @@ import numpy as np
 from networkx import Graph
 from qiskit import Aer, execute, BasicAer
 
+import cvxpy as cp
+from itertools import product
+from scipy.linalg import sqrtm
+
+
 # Value of a given cut
 cutValueDict = {}
-def cut_value(G: Graph, x: str) -> int:
+def cut_value(G: Graph, x) -> int:
   #val = cutValueDict.get(x)
   #if val is not None:
   #  return val
-  #else:
-    result = 0
-    x = x[::-1]  # reverse the string since qbit 0 is LSB
-    for edge in G.edges():
-      u, v = edge
-      #weight = G.get_edge_data(u,v, 'weight')['weight']
-      if x[u] != x[v]: 
-        result += 1 #weight
-    #result= -(len(G.edges())/2- result)
-    cutValueDict[x] = result
-    return result
+  result = 0
+  if isinstance(x, str):
+    # reverse the string since qbit 0 is LSB
+    x = x[::-1]  
+  for edge in G.edges():
+    u, v = edge
+    #weight = G.get_edge_data(u,v, 'weight')['weight']
+    if x[u] != x[v]: 
+      result += 1 #weight
+  #cutValueDict[x] = result
+  return result
 
 def value_of_edge(G: Graph, x: str, edge) -> int:
     """
     Return 1 if the edge is cut given the cut x, 0 otherwise
     """
+    x = x[::-1]  # reverse x
     u, v = edge
     if x[u] != x[v] and edge in G.edges() :
-      return 1
+      return G[u][v]['weight'] if 'weight' in G[u][v] else 1
     else:
       return 0
 
@@ -49,8 +55,11 @@ def get_energy(G, qaoa_qc, gamma, beta, edge, sim=Aer.get_backend('statevector_s
   #calculate energy
   energy = 0
   for cut, prob in result.get_counts().items():
-    #energy += cut_value(G, cut) * prob  #energy of whole graph
-    energy += value_of_edge(G, cut, edge) * prob  #energy of single edge
+    if edge is not None:
+      energy += value_of_edge(G, cut, edge) * prob  #energy of single edge
+    else:
+      energy += cut_value(G, cut) * prob  #energy of whole graph
+    
     # normalize
   if str(sim) != 'statevector_simulator':
     energy = energy / shots
@@ -75,3 +84,83 @@ def get_energy_grid(G, qaoa_qc, edge, gammaMax=2*np.pi, betaMax=np.pi, samples=1
       print('\t' + f'{(i*samples + j + 1)}/{samples**2} samples', end='')
   print()
   return result
+
+
+def maximizing_parameters(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, plotting=True, atol=1e-5):
+  """
+  returns the position of the maximizing parameters.
+  Used for plotting (half a pixel is added).
+  For true maximizing parameters set plotting to False.
+  """
+  gam_idx, bet_idx = np.where(energy_grid >= energy_grid.max() - atol)
+  if plotting:
+    gam = gam_idx + .5  # add half a pixel
+    bet = bet_idx + .5  
+  else: 
+    gam = gam_idx + 0.
+    bet = bet_idx + 0.
+  gam *= gammaMax/energy_grid.shape[0]  # adjust scale
+  bet *= betaMax/energy_grid.shape[1]
+  
+  return gam, bet
+
+
+def param_transferable(e1, e2, a=.8, b=.7):
+  threshold1 = a*e1.max() + (1-a)*e1.min() - 1e-5
+  threshold2 = b*e2.max() + (1-b)*e2.min() - 1e-5
+  # idx where values are in the top 5%
+  e1_max = np.where(e1 >= threshold1)
+  if np.count_nonzero(e2[e1_max] >= threshold2) / len(e2[e1_max]) >= .8:
+    # if more than 75% align
+    print(np.count_nonzero(e2[e1_max] >= threshold2) / len(e2[e1_max]))
+    return True
+  else:
+    return False
+
+
+def maxcut(G):
+  """ 
+  Brute force maxcut algorithm.
+  Cut has LSB first.
+  """
+  
+  maxcut_val = 0
+  for cut in product([0,1], repeat=len(G)):
+    cut = np.array(cut)[::-1]
+    # only go through half of the cuts
+    if cut[-1] == 1: 
+      break
+
+    val = cut_value(G, cut)
+    if val > maxcut_val:
+      maxcut_val = val
+      opt_cut = cut
+  #opt_cut = ''.join(map(str,opt_cut))
+  return opt_cut
+
+
+def GW_maxcut(G):
+  """ 
+  GW as done by visually explained 
+  https://www.youtube.com/watch?v=aFVnWq3RHYU
+
+  LSB first in returned list
+  """
+  X = cp.Variable((len(G), len(G)), symmetric=True)
+
+  constraints = [X >> 0]  # positive definite
+  constraints += [X[i,i] == 1 for i in range(len(G))]  # unit vectors
+  objective = sum(0.5 * (1- X[i,j]) for (i,j) in G.edges())
+
+  prob = cp.Problem(cp.Maximize(objective), constraints)
+  prob.solve()
+
+  x = sqrtm(X.value)
+  u = np.random.randn(len(G))  # normal to a random hyperplane
+  x = np.sign(x @ u)
+
+  # conversion
+  x = np.real(x)
+  x = (x + 1) / 2
+
+  return x.astype(int)

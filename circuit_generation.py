@@ -16,7 +16,8 @@ def operator_from_graph(G: Graph) -> str:
     s[u] = 'Z'
     s[v] = 'Z'
     s = s[::-1]  # reverse, so qbit 0 is node 0
-    operator += eval('^'.join(s)) #* G[u][v]['weight']
+    weight = G[u][v]['weight'] if 'weight' in G[u][v] else 1  # case for weighted graph
+    operator += eval('^'.join(s)) * weight
   return -0.5 * operator
 
 
@@ -58,7 +59,7 @@ def ws_mixer(beta, apx_sol, eps=0.5):
   return qc
 
 
-def qaoa_circuit(G: Graph, apx_sol=None, eps=0.5):
+def qaoa_circuit(G: Graph, apx_sol=None, eps=0.1):
 
   operator = operator_from_graph(G)
 

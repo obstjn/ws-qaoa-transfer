@@ -16,12 +16,12 @@ def get_ws_subgraphs(G, apx_sol):
   """ ~~~~~~~~~ """
   G3reg0 = Graph()
   G3reg0.add_edges_from([(0,2), (1,2), (2,3), (3,4), (3,5)])
-  warmstarts = np.load('./ws-energies/ws-confs/3reg0_confs.npy')
+  warmstarts = np.load('./ws-energies/ws-confs/confs_with_0.5/3reg0_confs.npy')
   graphs0 = []
 
   for ws in warmstarts:
     Gws = G3reg0.copy()
-    number = ws_to_number(ws, base=3)
+    number = ws_to_number(ws)
     attrs = {i: ws[i] for i in range(len(ws))}
     nx.set_node_attributes(Gws, attrs, name='weight')
     graphs0.append((Gws, number))
@@ -33,7 +33,7 @@ def get_ws_subgraphs(G, apx_sol):
 
   for ws in warmstarts:
     Gws = G3reg1.copy()
-    number = ws_to_number(ws, base=3)
+    number = ws_to_number(ws)
     attrs = {i: ws[i] for i in range(len(ws))}
     nx.set_node_attributes(Gws, attrs, name='weight')
     graphs1.append((Gws, number))

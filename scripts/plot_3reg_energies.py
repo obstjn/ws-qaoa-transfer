@@ -41,8 +41,8 @@ confs2 = np.array(confs)
 
 configs = [confs0, confs1, confs2]
 for i, apx in enumerate(configs):
-  energy = np.load(f'./ws-energies/3reg{i}/energies/{ws_to_number(apx)}_energy.npy')
+  energy = np.load(f'./ws-energies/3reg{i}/energies/{ws_to_number(apx, base=3)}_energy.npy')
   draw_graph_with_ws(eval(f'G_3reg{i}'), warmstarting=apx, show=False)
-  plt.savefig(f'3reg{i}_ws_graph_{ws_to_number(apx)}.pdf')
+  plt.savefig(f'3reg{i}_ws_graph_{ws_to_number(apx, base=3)}.pdf')
   plt.close()
-  plot_energy(energy, title=str(apx), filename=f'3reg{i}_{ws_to_number(apx)}')
+  plot_energy(energy, title=str(apx), filename=f'3reg{i}_{ws_to_number(apx, base=3)}')

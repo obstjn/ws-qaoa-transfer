@@ -42,7 +42,7 @@ def ws_hashing(apx_sol):
   return ws_hash
 
 
-def number_to_ws(n, l):
+def number_to_ws(n, l, base=3):
     """
     Gives the warm start corresponding to a certain number.
     Index 0 is warm starting of node 0
@@ -52,15 +52,15 @@ def number_to_ws(n, l):
         return np.array([0]*l)
     digits = []
     while n:
-        digits.append(int(n % 3))
-        n //= 3
+        digits.append(int(n % base))
+        n //= base
     # pad with zeros
     digits.extend([0]*(l-len(digits)))
-    return np.array(digits) / 2
+    return np.array(digits) / (base - 1)
 
 
-def ws_to_number(apx_sol):
-    return int(sum([2*apx_sol[i] * 3**i for i in range(len(apx_sol))]))
+def ws_to_number(apx_sol, base=2):
+    return int(sum([(base-1)*apx_sol[i] * base**i for i in range(len(apx_sol))]))
 
 
 def get_ws_from_attributes(G):
@@ -92,7 +92,7 @@ def split_node(G, node):
   return nx.convert_node_labels_to_integers(G)
 
 
-def get_3reg0_equivalent(G):
+def get_reg0_equivalent(G):
   G_eq = G.copy()
   for node in G.nodes:
     if G_eq.degree(node) == 2:
@@ -110,8 +110,6 @@ def get_subgraphs(G):
     subgraph.add_edges_from([(u,n) for n in G.neighbors(u)])
     subgraph.add_edges_from([(v,n) for n in G.neighbors(v)])
     subgraph = nx.convert_node_labels_to_integers(subgraph)
-    #nx.draw(subgraph, with_labels=True)
-    #plt.show()
 
     # iso check
     for item in subgraphs:
@@ -138,28 +136,30 @@ def get_ws_subgraphs(G, apx_sol):
     subgraph.add_edges_from([(u,n) for n in G.neighbors(u)])
     subgraph.add_edges_from([(v,n) for n in G.neighbors(v)])
 
+    inverted_sg = subgraph.copy()
+
     attrs = {i: apx_sol[i] for i in subgraph.nodes}
     nx.set_node_attributes(subgraph, attrs, 'weight')
 
-    subgraph = nx.convert_node_labels_to_integers(subgraph)
+    # subgraph with inverse apx_sol
+    attrs_inv = {i: np.abs(apx_sol[i]-1) for i in inverted_sg.nodes}
+    nx.set_node_attributes(inverted_sg, attrs_inv, 'weight')
 
+    # normalize labels
+    subgraph = nx.convert_node_labels_to_integers(subgraph)
+    inverted_sg = nx.convert_node_labels_to_integers(inverted_sg)
 
     # iso check
     comp = lambda g1, g2: g1['weight'] == g2['weight']
     for item in subgraphs:
       sg, edge, occurrence = item
-      if nx.is_isomorphic(subgraph, sg, node_match=comp):  # found iso
+      if nx.is_isomorphic(subgraph, sg, node_match=comp) or nx.is_isomorphic(inverted_sg, sg, node_match=comp):  # found iso
         item[2] += 1  # increase occurrence by one
         break
     else:  # executed if no break
       edge = (0,1)
       subgraphs.append([subgraph, edge, 1])
     
-  # plotting
-  #for item in subgraphs:
-  #  subgraph, _, _ = item
-  #  draw_graph_with_ws(subgraph, show=False)
-  #plt.show()
   return subgraphs
 
 

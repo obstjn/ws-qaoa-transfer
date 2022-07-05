@@ -63,12 +63,14 @@ e_5reg4 = (0,5)
 list_5reg = [(G_5reg0, e_5reg0), (G_5reg1, e_5reg1), (G_5reg2, e_5reg2), (G_5reg3, e_5reg3), (G_5reg4, e_5reg4)]
 
 
+"""
+# calculate the configurations/eliminate duplicates
 iso_dict = {}
 confs = []
-k = 2
-g = eval(f'G_3reg{k}')
+k = 0
+g = eval(f'G_4reg{k}')
 
-for apx_sol in product([0, .5, 1], repeat=len(g)):
+for apx_sol in product([0, 1], repeat=len(g)):
     ws = np.array(apx_sol[::-1])
 
     if iso_in_dict(g, ws, iso_dict) or iso_in_dict(g, np.abs(ws-1), iso_dict):
@@ -95,16 +97,26 @@ for i in range(len(confs)):
             print(confs[i], confs[j])
 
 confs = np.array(confs)
+np.save(f'./ws-energies/ws-confs/4reg{k}_confs.npy', confs)
 print(len(confs))
-#np.save(f'./ws-energies/ws-confs/3reg{k}_confs.npy', confs)
+"""
+
+k = 0
+
+# get relevant confs
+confs = np.load(f'./ws-energies/ws-confs/4reg{k}_confs.npy')
+print(len(confs))
 
 # calculate energy grids
-g, e = list_3reg[k]
+g, e = list_4reg[k]
 
 for apx_sol in confs:
-    n = ws_to_number(apx_sol)
+    n = ws_to_number(apx_sol, base=2)
+    if n not in [23, 43, 51]:
+      continue
+    print(n)
 
     qaoa_qc = qaoa_circuit(g, apx_sol, eps=.1)
 
     energy_grid = get_energy_grid(g, qaoa_qc, e, samples=30)
-    np.save(f'./ws-energies/3reg{k}/energies/{int(n)}_energy.npy', energy_grid)
+    np.save(f'./ws-energies/4reg{k}/energies/{int(n)}_energy.npy', energy_grid)

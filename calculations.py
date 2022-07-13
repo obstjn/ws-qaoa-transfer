@@ -164,3 +164,26 @@ def GW_maxcut(G):
   x = (x + 1) / 2
 
   return x.astype(int)
+
+
+def transferability_coeff(donor_grid, acceptor_grid):
+  """ 
+  Take maxima locations of donor, average value in acceptor compared to acceptor maximum.
+  """
+  if donor_grid.shape != acceptor_grid.shape:
+    raise ValueError(f"Energy grids must have the same size, but have sizes {donor_grid.shape} and {acceptor_grid.shape}!")
+  idx_locations = np.where(donor_grid >= donor_grid.max() - 1e-5)
+  return np.average(acceptor_grid[idx_locations]) / acceptor_grid.max()
+
+def difference_coeff(donor_grid, acceptor_grid):
+  """ 
+  Scale each grid to [0., 1.]; 
+  return average difference
+  """
+  if donor_grid.shape != acceptor_grid.shape:
+    raise ValueError(f"Energy grids must have the same size, but have sizes {donor_grid.shape} and {acceptor_grid.shape}!")
+  donor = (donor_grid - donor_grid.min()) / donor_grid.max()
+  acceptor = (acceptor_grid - acceptor_grid.min()) / acceptor_grid.max()
+  diff = np.abs(donor - acceptor)
+  return np.average(diff)
+

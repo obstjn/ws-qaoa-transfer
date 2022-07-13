@@ -32,7 +32,7 @@ for i in range(3):
   for filename in sorted(os.listdir(folder)):
     # number of grid
     k = int(filename.split('_')[0])
-    ws = number_to_ws(k, len(G))
+    ws = number_to_ws(k, len(G), base=3)
 
     if ws[edge[0]] == 1 and ws[edge[1]] == 0 or ws[edge[0]] == 0 and ws[edge[1]] == 1:
       if .5 in ws:

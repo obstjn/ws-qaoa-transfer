@@ -38,7 +38,7 @@ for filename in sorted(os.listdir(folder)):
   print(transferable)
   for i in transferable:
     e = np.load(folder + f'{i}_energy.npy')
-    plot_energy_with_marker(e, title=number_to_ws(i, 4), a=.7)
+    plot_energy_with_marker(e, title=number_to_ws(i, 4, base=3), a=.7)
   plt.show()
 
 #for i in [100, 11, 14, 18, 19, 20]:

@@ -38,7 +38,7 @@ list_3reg = [(G_3reg0, e_3reg0), (G_3reg1, e_3reg1), (G_3reg2, e_3reg2)]
 #
 #for filename in sorted(os.listdir(folder2)):
 #    k2 = int(filename.split('_')[0])
-#    ws2 = number_to_ws(k2, 4)  # ws for G_3reg2
+#    ws2 = number_to_ws(k2, 4, base=3)  # ws for G_3reg2
 #
 #    # create analogous ws
 #    ws1 = np.empty(5)
@@ -76,7 +76,7 @@ folder0 = f'./ws-energies/3reg0/energies/'
 
 for filename in sorted(os.listdir(folder1)):
     k1 = int(filename.split('_')[0])
-    ws1 = number_to_ws(k1, 5)  # ws for G_3reg1
+    ws1 = number_to_ws(k1, 5, base=3)  # ws for G_3reg1
 
     # create analogous ws
     ws0 = np.empty(6)

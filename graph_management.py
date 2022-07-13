@@ -42,7 +42,7 @@ def ws_hashing(apx_sol):
   return ws_hash
 
 
-def number_to_ws(n, l, base=3):
+def number_to_ws(n, l, base=2):
     """
     Gives the warm start corresponding to a certain number.
     Index 0 is warm starting of node 0

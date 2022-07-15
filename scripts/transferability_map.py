@@ -42,20 +42,35 @@ for i in range(n):
   acceptor = energy_grids[i]
   for j in range(n):
     donor = energy_grids[j]
-    #transfer_map[i,j] = transferability_coeff(donor, acceptor)
-    transfer_map[i,j] = difference_coeff(donor, acceptor)
+    transfer_map[i,j] = transferability_coeff(donor, acceptor)
+    #transfer_map[i,j] = average_difference(donor, acceptor)
 
-fig, ax = plt.subplots()
-img = ax.imshow(transfer_map, cmap='inferno')
+
+# plotting
+fig, ax = plt.subplots(figsize=(26.0, 16.0))
+ax.set_xlabel('Donor subgraph', fontsize='x-large')
+ax.set_ylabel('Acceptor subgraph', fontsize='x-large')
+img = ax.imshow(transfer_map, cmap='inferno', interpolation='none')
 plt.colorbar(img)
 
 # line seperators
 location = -0.5  # seperator between pixels
+ticks = []
+labels = []
 for x in [3, 4, 5]:
   for i in range(x):
     numbers = eval(f'ws_numbers_{x}reg{i}')
     location += len(numbers)
-    ax.axvline(x=location, color='k')
-    ax.axhline(y=location, color='k')
+    if location < len(energy_grids) - 1:  # skip last lines
+      ax.axvline(x=location, color='white', linestyle='--')
+      ax.axhline(y=location, color='white', linestyle='--')
+
+    ticks.append(location - len(numbers)/2)
+    labels.append(f'{x}reg{i}')
     
-plt.show()
+plt.xticks(ticks, labels)
+plt.yticks(ticks, labels)
+ax.xaxis.tick_top()
+plt.title('Transferability coefficients', fontsize='30', y=1.05)
+#plt.show()
+plt.savefig('transferability_map.pdf')

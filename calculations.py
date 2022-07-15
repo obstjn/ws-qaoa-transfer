@@ -173,17 +173,20 @@ def transferability_coeff(donor_grid, acceptor_grid):
   if donor_grid.shape != acceptor_grid.shape:
     raise ValueError(f"Energy grids must have the same size, but have sizes {donor_grid.shape} and {acceptor_grid.shape}!")
   idx_locations = np.where(donor_grid >= donor_grid.max() - 1e-5)
-  return np.average(acceptor_grid[idx_locations]) / acceptor_grid.max()
+  # normalize acceptor to range from [0, 1]
+  acceptor = (acceptor_grid - acceptor_grid.min()) / (acceptor_grid.max() - acceptor_grid.min())  
+  return np.average(acceptor[idx_locations])
 
-def difference_coeff(donor_grid, acceptor_grid):
+def average_difference(donor_grid, acceptor_grid):
   """ 
   Scale each grid to [0., 1.]; 
   return average difference
   """
   if donor_grid.shape != acceptor_grid.shape:
     raise ValueError(f"Energy grids must have the same size, but have sizes {donor_grid.shape} and {acceptor_grid.shape}!")
-  donor = (donor_grid - donor_grid.min()) / donor_grid.max()
-  acceptor = (acceptor_grid - acceptor_grid.min()) / acceptor_grid.max()
+  # normalize acceptor to range from [0, 1]
+  donor = (donor_grid - donor_grid.min()) / (donor_grid.max() - donor_grid.min())  
+  acceptor = (acceptor_grid - acceptor_grid.min()) / (acceptor_grid.max() - acceptor_grid.min())
   diff = np.abs(donor - acceptor)
   return np.average(diff)
 

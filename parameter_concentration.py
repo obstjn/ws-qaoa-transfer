@@ -10,7 +10,7 @@ from graph_management import *
 from scipy.optimize import minimize
 
 
-X = 4
+X = 5
 np.random.seed(42)
 # generate random X-regular donor graph (20 nodes)
 # calculate GW approximation for warm-start
@@ -18,26 +18,26 @@ G_donor = nx.random_regular_graph(X, 20, seed=0)
 
 # calculate approximation and true maxcut
 apx_donor = GW_maxcut(G_donor)
-#maxcut_donor = maxcut(G_donor)
-#maxval_donor = cut_value(G_donor, maxcut_donor)  # =26
-#apxval_donor = cut_value(G_donor, apx_donor)
+maxcut_donor = maxcut(G_donor)
+maxval_donor = cut_value(G_donor, maxcut_donor)  # =26  # =32  # =42
+#apxval_donor = cut_value(G_donor, apx_donor)  # = 25  # =32  # =40
 
 # show subgraphs
-for (subgraph, edge, occurence) in get_ws_subgraphs(G_donor, apx_donor):
-  print(occurence)
-  draw_graph_with_ws(subgraph, show=False)
-  plt.show()
+#for (subgraph, edge, occurence) in get_ws_subgraphs(G_donor, apx_donor):
+#  print(occurence)
+#  draw_graph_with_ws(subgraph, show=False)
+#plt.show()
 
 # subgraph type, ws_number, occurence
-sg_data = [(0,182,2), (1,60,3), (1,56,6), (0,56,10), (0,62,7), (0,72,2)]  # 3reg
-sg_data = [(1,19,6), (0,19,10), (0,23,3), (0,51,7), (1,20,3), (1,25,2), (0,25,2), (0,41,2), (0,24,1), (1,17,2), (1,21,2)]  # 4reg
-#TODO sg_data = [(0,182,2), (1,60,3), (1,56,6), (0,56,10), (0,62,7), (0,72,2)]  # 5reg
+sg_data3 = [(0,182,2), (1,60,3), (1,56,6), (0,56,10), (0,62,7), (0,72,2)]  # 3reg
+sg_data4 = [(1,19,6), (0,19,10), (0,23,3), (0,51,7), (1,20,3), (1,25,2), (0,25,2), (0,41,2), (0,24,1), (1,17,2), (1,21,2)]  # 4reg
+sg_data5 = [(0,211,3), (0,99,4), (1,41,4), (1,35,2), (0,113,2), (0,35,1), (0,49,2), (0,103,6), (0,39,10), (1,39,4), (0,47,4), (1,49,1), (1,40,1), (1,51,4), (2,36,1), (3,37,1)]  # 5reg
 
 # calculate the optimal parameters (warm-started)
 # energy from subgraphs
-#donor_energy = np.zeros((30,30))
-#for typ, ws, occ in sg_data:
-#  donor_energy += occ * np.load(f'./ws-energies/{X}reg{typ}/energies/{ws}_energy.npy')
+donor_energy = np.zeros((30,30))
+for typ, ws, occ in eval(f'sg_data{X}'):
+  donor_energy += occ * np.load(f'./ws-energies/{X}reg{typ}/energies/{ws}_energy.npy')
   
 #plot_energy(donor_energy)
 #gam, bet = maximizing_parameters(donor_energy, plotting=False)
@@ -81,7 +81,7 @@ def anti_objective_function_ws(params, *args):
 #print(f'\noptimized apx ratio: {-optimized_result.fun/maxval_donor}')
 
 
-# high parameter transfer
+## high parameter transfer
 #apx_cuts = []
 #opt_cuts = []
 #opt_values = []
@@ -109,8 +109,8 @@ def anti_objective_function_ws(params, *args):
 #  opt_energies.append(energy)
 #
 #  print(energy/opt_val)
-  
-# save results
+#  
+## save results
 #apx_cuts = np.array(apx_cuts)
 #opt_cuts = np.array(opt_cuts)
 #opt_values = np.array(opt_values)
@@ -120,9 +120,6 @@ def anti_objective_function_ws(params, *args):
 #np.save(f'./scripts/data-stash/{X}reg/opt_values.npy', opt_values)
 #np.save(f'./scripts/data-stash/{X}reg/opt_energies.npy', opt_energies)
 
-# load results
-#opt_values = np.load(f'./scripts/data-stash/{X}reg/opt_values.npy')
-#opt_energies = np.load(f'./scripts/data-stash/{X}reg/opt_energies.npy')
 
 # random parameters
 #apx_cuts = np.load(f'./scripts/data-stash/{X}reg/apx_cuts.npy')
@@ -131,7 +128,7 @@ def anti_objective_function_ws(params, *args):
 #print('\nrandom apx ratio acceptors:')
 #np.random.seed(42)
 #for i in range(30):
-#  # generate 25 acceptor graphs
+#  # generate 30 acceptor graphs
 #  G_acceptor = nx.random_regular_graph(X, 20, seed=i+1)
 #  # calculate GW approximation
 #  apx_acc = apx_cuts[i]
@@ -155,12 +152,15 @@ def anti_objective_function_ws(params, *args):
 
 
 # deoptimize parameters
-#maxval_donor = 26
 #gam, bet = np.where(donor_energy <= donor_energy.min() + 1e-5)
 #gam = gam[0]
 #bet = bet[0]
 #gam *= 2*np.pi / donor_energy.shape[0]
 #bet *= np.pi / donor_energy.shape[1]
+#print(f'minimum energy donor:   {donor_energy.min()}')
+#print(f'maxcut value donor:     {maxval_donor}')
+#print(f'min apx ratio of donor: {donor_energy.min()/maxval_donor}')
+#print()
 #print('minimizing parameters')
 #print(f'gamma: {gam}, beta: {bet}')
 #

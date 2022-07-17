@@ -184,7 +184,7 @@ def average_difference(donor_grid, acceptor_grid):
   """
   if donor_grid.shape != acceptor_grid.shape:
     raise ValueError(f"Energy grids must have the same size, but have sizes {donor_grid.shape} and {acceptor_grid.shape}!")
-  # normalize acceptor to range from [0, 1]
+  # normalize grids to range from [0, 1]
   donor = (donor_grid - donor_grid.min()) / (donor_grid.max() - donor_grid.min())  
   acceptor = (acceptor_grid - acceptor_grid.min()) / (acceptor_grid.max() - acceptor_grid.min())
   diff = np.abs(donor - acceptor)

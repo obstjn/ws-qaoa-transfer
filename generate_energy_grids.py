@@ -62,7 +62,6 @@ e_5reg4 = (0,5)
 
 list_5reg = [(G_5reg0, e_5reg0), (G_5reg1, e_5reg1), (G_5reg2, e_5reg2), (G_5reg3, e_5reg3), (G_5reg4, e_5reg4)]
 
-
 """
 # calculate the configurations/eliminate duplicates
 iso_dict = {}

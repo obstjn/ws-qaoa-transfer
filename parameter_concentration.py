@@ -18,9 +18,11 @@ G_donor = nx.random_regular_graph(X, 20, seed=0)
 
 # calculate approximation and true maxcut
 apx_donor = GW_maxcut(G_donor)
+draw_graph_with_cut(G_donor, apx_donor, draw_labels=True)
 maxcut_donor = maxcut(G_donor)
 maxval_donor = cut_value(G_donor, maxcut_donor)  # =26  # =32  # =42
 #apxval_donor = cut_value(G_donor, apx_donor)  # = 25  # =32  # =40
+
 
 # show subgraphs
 #for (subgraph, edge, occurence) in get_ws_subgraphs(G_donor, apx_donor):

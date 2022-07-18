@@ -2,7 +2,7 @@ import numpy as np
 import networkx as nx
 from networkx import Graph
 import matplotlib.pyplot as plt
-
+from matplotlib.patches import Rectangle
 
 from circuit_generation import *
 from calculations import *
@@ -88,6 +88,10 @@ for x in [3, 4, 5]:
     ticks.append(location - len(numbers)/2)
     labels.append(f'{x}reg{i}')
     
+# Rectangle patch to find current value
+rect = Rectangle((-1, -1), 1, 1, linewidth=2, edgecolor='deepskyblue', facecolor='none', zorder=2)
+ax_map.add_patch(rect)
+    
 # map labels
 plt.xticks(ticks, labels)
 plt.yticks(ticks, labels)
@@ -132,6 +136,8 @@ def update(event):
   donor_text.set_text(f'difference: {map_data[y,x]:.4f}')  # transpose b.c. origin lower
   acc_type, acc_num, acc_label = graph_data[y]
   don_type, don_num, don_label = graph_data[x]
+  # marker
+  rect.set_xy((x-.5,y-.5))
 
   # update donor
   ax_donor_graph.clear()

@@ -111,9 +111,10 @@ def plot_3d():
 """ graph drawing """
 def node_color_mapping(G, cut):
   """ returns a color mapping where the nodes are colored by partition."""
-  cut = cut[::-1]
+  if isinstance(cut, str):
+    cut = cut[::-1]  # reverse cut
   color_map =[]
-  for x in range(len(G)):
+  for x in G.nodes():
     if cut[x] == '1' or cut[x] == 1:
       color_map.append('red')
     else:
@@ -124,7 +125,8 @@ def node_color_mapping(G, cut):
 def edge_color_mapping(G, cut):
   """ returns a color mapping where edges belonging to the cut are highlighted."""
   edges = G.edges()
-  cut = cut[::-1]  # reverse cut
+  if isinstance(cut, str):
+    cut = cut[::-1]  # reverse cut
   edge_color = []
   for u, v in edges:
     if cut[u] != cut[v]:

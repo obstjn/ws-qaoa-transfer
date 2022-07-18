@@ -56,6 +56,8 @@ ax_donor_landscape = plt.axes([.26, .55, .1846, .3])
 format_landscape(ax_donor_landscape)
 donor_landscape = ax_donor_landscape.imshow(np.ones((30,30)), cmap=_cmap, interpolation='none', origin='lower', extent=[0, betaMax, 0, gammaMax])
 ax_donor_landscape.set_aspect(betaMax/gammaMax)
+donor_text = ax_donor_landscape.text(0.27, -0.2, '', fontsize=16, transform=ax_donor_landscape.transAxes)
+
 # acceptor
 ax_acceptor_graph = plt.axes([.05, .15, .1846, .3])
 ax_acceptor_landscape = plt.axes([.26, .15, .1846, .3])
@@ -68,7 +70,6 @@ ax_acceptor_landscape.set_aspect(betaMax/gammaMax)
 ax_map = plt.axes([.5, .05, .5, .9])
 ax_map.set_xlabel('Donor subgraph', fontsize='x-large')
 ax_map.set_ylabel('Acceptor subgraph', fontsize='x-large')
-map_text = ax_map.text(0.76, -0.03, '', fontsize=16, transform=ax_map.transAxes)
 img = ax_map.imshow(map_data, cmap=_cmap, interpolation='none')
 plt.colorbar(img)
 
@@ -128,9 +129,9 @@ def update(event):
       return
 
   x, y = int(event.xdata + .5), int(event.ydata + .5)
-  map_text.set_text(f'difference: {map_data[x,y]:.4f}')
-  acc_type, acc_num, acc_label = graph_data[x]
-  don_type, don_num, don_label = graph_data[y]
+  donor_text.set_text(f'difference: {map_data[y,x]:.4f}')  # transpose b.c. origin lower
+  acc_type, acc_num, acc_label = graph_data[y]
+  don_type, don_num, don_label = graph_data[x]
 
   # update donor
   ax_donor_graph.clear()

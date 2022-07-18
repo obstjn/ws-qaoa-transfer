@@ -35,6 +35,7 @@ for x in [3,4,5]:
 
 gammaMax, betaMax = 2*np.pi, np.pi
 map_data = np.load('./ws-energies/transferability/transferability_map.npy')
+map_data[0,182] =0
 #map_data = np.load('./ws-energies/transferability/difference_map.npy')
 _cmap = 'inferno'  # transferability: 'inferno'   difference: 'inferno_r'
 
@@ -52,14 +53,19 @@ def format_landscape(ax):
 # donor
 ax_donor_graph = plt.axes([.05, .55, .1846, .3])
 ax_donor_landscape = plt.axes([.26, .55, .1846, .3])
+# markers
+donor_markers,  = ax_donor_landscape.plot(-1, -1, linestyle='none', marker='o', markersize=11, markeredgewidth=2, fillstyle='none', markeredgecolor='deepskyblue')
 # format
 format_landscape(ax_donor_landscape)
 donor_landscape = ax_donor_landscape.imshow(np.ones((30,30)), cmap=_cmap, interpolation='none', origin='lower', extent=[0, betaMax, 0, gammaMax])
 ax_donor_landscape.set_aspect(betaMax/gammaMax)
+donor_text = ax_donor_landscape.text(0.27, -0.2, '', fontsize=16, transform=ax_donor_landscape.transAxes)
 
 # acceptor
 ax_acceptor_graph = plt.axes([.05, .15, .1846, .3])
 ax_acceptor_landscape = plt.axes([.26, .15, .1846, .3])
+# markers
+acceptor_markers,  = ax_acceptor_landscape.plot(-1, -1, linestyle='none', marker='o', markersize=11, markeredgewidth=2, fillstyle='none', markeredgecolor='deepskyblue')
 # format
 format_landscape(ax_acceptor_landscape)
 acceptor_landscape = ax_acceptor_landscape.imshow(np.ones((30,30)), cmap=_cmap, interpolation='none', origin='lower', extent=[0, betaMax, 0, gammaMax])
@@ -69,7 +75,6 @@ ax_acceptor_landscape.set_aspect(betaMax/gammaMax)
 ax_map = plt.axes([.5, .05, .5, .9])
 ax_map.set_xlabel('Donor subgraph', fontsize='x-large')
 ax_map.set_ylabel('Acceptor subgraph', fontsize='x-large')
-map_text = ax_map.text(0.76, -0.03, '', fontsize=16, transform=ax_map.transAxes)
 img = ax_map.imshow(map_data, cmap=_cmap, interpolation='none')
 plt.colorbar(img)
 
@@ -129,20 +134,26 @@ def update(event):
       return
 
   x, y = int(event.xdata + .5), int(event.ydata + .5)
-  map_text.set_text(f'coefficient: {map_data[x,y]:.4f}')
-  acc_type, acc_num, acc_label = graph_data[x]
-  don_type, don_num, don_label = graph_data[y]
+  donor_text.set_text(f'coefficient: {map_data[y,x]:.4f}')  # transpose b.c. origin lower
+  acc_type, acc_num, acc_label = graph_data[y]
+  don_type, don_num, don_label = graph_data[x]
+
+  # markers
+  don_energy = np.load(f'./ws-energies/{don_type}/energies/{don_num}_energy.npy')
+  gam, bet = maximizing_parameters(don_energy)
 
   # update donor
   ax_donor_graph.clear()
   ax_donor_graph.set_title('Donor graph')
   ax_donor_graph.text(0.76, 1.02, f'{don_type}  ({don_label})', transform=ax_donor_graph.transAxes)
+  donor_markers.set_data(bet, gam)
   update_step(don_type, don_num, donor_landscape, ax_donor_graph)
 
   # update acceptor
   ax_acceptor_graph.clear()
   ax_acceptor_graph.set_title('Acceptor graph')
   ax_acceptor_graph.text(0.76, 1.02, f'{acc_type}  ({acc_label})', transform=ax_acceptor_graph.transAxes)
+  acceptor_markers.set_data(bet, gam)
   update_step(acc_type, acc_num, acceptor_landscape, ax_acceptor_graph)
 
   # draw

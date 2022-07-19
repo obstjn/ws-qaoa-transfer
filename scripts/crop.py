@@ -1,7 +1,7 @@
 import os
 
-input_dir = '/home/obstjn/Dokumente/MA/code/ws-energies/plots/energy-plots/5reg3/'
-output_dir = '/home/obstjn/Dokumente/MA/Latex/graphics/regular_ws_landscapes/'
+input_dir = '/home/obstjn/Dokumente/MA/Latex/graphics/Deprecated/param_conc/'
+output_dir = '/home/obstjn/Dokumente/MA/Latex/graphics/param_conc/'
 
 for filename in os.listdir(input_dir):
   if filename.endswith('.pdf'):

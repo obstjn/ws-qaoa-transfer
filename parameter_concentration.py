@@ -10,7 +10,7 @@ from graph_management import *
 from scipy.optimize import minimize
 
 
-X = 5
+X = 3
 np.random.seed(42)
 # generate random X-regular donor graph (20 nodes)
 # calculate GW approximation for warm-start
@@ -18,17 +18,19 @@ G_donor = nx.random_regular_graph(X, 20, seed=0)
 
 # calculate approximation and true maxcut
 apx_donor = GW_maxcut(G_donor)
-draw_graph_with_cut(G_donor, apx_donor, draw_labels=True)
-maxcut_donor = maxcut(G_donor)
-maxval_donor = cut_value(G_donor, maxcut_donor)  # =26  # =32  # =42
+#maxcut_donor = maxcut(G_donor)
+#maxval_donor = cut_value(G_donor, maxcut_donor)  # =26  # =32  # =42
 #apxval_donor = cut_value(G_donor, apx_donor)  # = 25  # =32  # =40
 
-
+# plot graph with apx warm-start
+#draw_graph_with_cut(G_donor, apx_donor, draw_labels=True)
 # show subgraphs
-#for (subgraph, edge, occurence) in get_ws_subgraphs(G_donor, apx_donor):
-#  print(occurence)
-#  draw_graph_with_ws(subgraph, show=False)
-#plt.show()
+h = 0 
+for (subgraph, edge, occurence) in get_ws_subgraphs(G_donor, apx_donor):
+  h += 1
+  print(h, occurence)
+  draw_graph_with_ws(subgraph, show=False)
+plt.show()
 
 # subgraph type, ws_number, occurence
 sg_data3 = [(0,182,2), (1,60,3), (1,56,6), (0,56,10), (0,62,7), (0,72,2)]  # 3reg
@@ -40,7 +42,9 @@ sg_data5 = [(0,211,3), (0,99,4), (1,41,4), (1,35,2), (0,113,2), (0,35,1), (0,49,
 donor_energy = np.zeros((30,30))
 for typ, ws, occ in eval(f'sg_data{X}'):
   donor_energy += occ * np.load(f'./ws-energies/{X}reg{typ}/energies/{ws}_energy.npy')
-  
+# plot energy
+#plot_energy(donor_energy, filename=f'{X}reg_donor')  
+
 #plot_energy(donor_energy)
 #gam, bet = maximizing_parameters(donor_energy, plotting=False)
 #gam = gam[0]
@@ -136,6 +140,7 @@ def anti_objective_function_ws(params, *args):
 #  apx_acc = apx_cuts[i]
 #  # random parameters
 #  gam, bet = np.random.rand(2) * np.array([2*np.pi, np.pi])
+#  print(gam, bet)
 #
 #  # use parameters to get the energy of each graph
 #  qc = qaoa_circuit(G_acceptor, apx_sol=apx_acc, eps=0.1)

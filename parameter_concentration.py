@@ -10,7 +10,7 @@ from graph_management import *
 from scipy.optimize import minimize
 
 
-X = 3
+X = 5
 np.random.seed(42)
 # generate random X-regular donor graph (20 nodes)
 # calculate GW approximation for warm-start
@@ -25,9 +25,7 @@ apx_donor = GW_maxcut(G_donor)
 # plot graph with apx warm-start
 #draw_graph_with_cut(G_donor, apx_donor, draw_labels=True)
 # show subgraphs
-h = 0 
 for (subgraph, edge, occurence) in get_ws_subgraphs(G_donor, apx_donor):
-  h += 1
   print(h, occurence)
   draw_graph_with_ws(subgraph, show=False)
 plt.show()

@@ -16,7 +16,7 @@ def get_ws_subgraphs(G, apx_sol):
   """ ~~~~~~~~~ """
   G3reg0 = Graph()
   G3reg0.add_edges_from([(0,2), (1,2), (2,3), (3,4), (3,5)])
-  warmstarts = np.load('./ws-energies/ws-confs/3reg0_confs.npy')
+  warmstarts = np.load('./ws-energies/ws-confs/confs_with_0.5/3reg0_confs.npy')
   graphs0 = []
 
   for ws in warmstarts:

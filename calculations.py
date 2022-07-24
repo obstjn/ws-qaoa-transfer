@@ -38,7 +38,7 @@ def value_of_edge(G: Graph, x: str, edge) -> int:
       return 0
 
 
-def get_energy(G, qaoa_qc, gamma, beta, edge, sim=Aer.get_backend('statevector_simulator'), shots=1024):
+def get_energy(G, qaoa_qc, gamma, beta, edge, sim=Aer.get_backend('statevector_simulator'), shots=1):
   """
   Calculates the energy for a qaoa instance with the given parameters.
   This corresponds to the expected MaxCut value.

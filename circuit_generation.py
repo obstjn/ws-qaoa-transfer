@@ -75,6 +75,7 @@ def qaoa_circuit(G: Graph, apx_sol=None, eps=0.1):
 
   qaoa_qc = qaoa.construct_circuit([beta, gamma], operator)[0]
 
-  qaoa_qc = transpile(qaoa_qc, basis_gates=['h', 'ry', 'rz', 'rx', 'cx'])
+  #qaoa_qc = transpile(qaoa_qc, basis_gates=['h', 'ry', 'rz', 'rx', 'cx'])
+  qaoa_qc = transpile(qaoa_qc, basis_gates=['h', 'ry', 'rzz', 'rx', 'rz'])
 
   return qaoa_qc

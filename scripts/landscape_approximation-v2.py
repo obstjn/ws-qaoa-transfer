@@ -83,38 +83,36 @@ def objective_function_true(params, *args):
 
   return -sum(energies)
 
-"""
-print('\noptimization apx:')
-start = time()
-np.random.seed(42)
-gam, bet = maximizing_parameters(apx_energy, plotting=False)
-gam, bet = gam[0], bet[0]
-xinit = np.array([gam, bet])
-
-optimized_result = minimize(objective_function_apx, x0=xinit, method='COBYLA')
-gam_apx = optimized_result.x[0]
-bet_apx = optimized_result.x[1]
-print()
-print(optimized_result)
-end = time()
-print(f'time elapsed: {end-start} s')
-
-print('\noptimization true:')
-start = time()
-np.random.seed(42)
-gam, bet = maximizing_parameters(true_energy, plotting=False)
-gam, bet = gam[0], bet[0]
-xinit = np.array([gam, bet])
-optimized_result = minimize(objective_function_true, x0=xinit, method='COBYLA', args=(G, apx, get_ws_subgraphs(G, apx)))
-gam_true = optimized_result.x[0]
-bet_true = optimized_result.x[1]
-print()
-print(optimized_result)
-end = time()
-print(f'time elapsed: {end-start} s')
-
-maxcut_val = cut_value(G, maxcut(G))
-apx_params_value = objective_function_true((gam_apx, bet_apx), G, apx, get_ws_subgraphs(G, apx))
-print(f'apx ratio of apx params: {-apx_params_value/maxcut_val}')
-print(f'apx ratio of opt params: {-optimized_result.fun/maxcut_val}')
-"""
+#print('\noptimization apx:')
+#start = time()
+#np.random.seed(42)
+#gam, bet = maximizing_parameters(apx_energy, plotting=False)
+#gam, bet = gam[0], bet[0]
+#xinit = np.array([gam, bet])
+#
+#optimized_result = minimize(objective_function_apx, x0=xinit, method='COBYLA')
+#gam_apx = optimized_result.x[0]
+#bet_apx = optimized_result.x[1]
+#print()
+#print(optimized_result)
+#end = time()
+#print(f'time elapsed: {end-start} s')
+#
+#print('\noptimization true:')
+#start = time()
+#np.random.seed(42)
+#gam, bet = maximizing_parameters(true_energy, plotting=False)
+#gam, bet = gam[0], bet[0]
+#xinit = np.array([gam, bet])
+#optimized_result = minimize(objective_function_true, x0=xinit, method='COBYLA', args=(G, apx, get_ws_subgraphs(G, apx)))
+#gam_true = optimized_result.x[0]
+#bet_true = optimized_result.x[1]
+#print()
+#print(optimized_result)
+#end = time()
+#print(f'time elapsed: {end-start} s')
+#
+#maxcut_val = cut_value(G, maxcut(G))
+#apx_params_value = objective_function_true((gam_apx, bet_apx), G, apx, get_ws_subgraphs(G, apx))
+#print(f'apx ratio of apx params: {-apx_params_value/maxcut_val}')
+#print(f'apx ratio of opt params: {-optimized_result.fun/maxcut_val}')

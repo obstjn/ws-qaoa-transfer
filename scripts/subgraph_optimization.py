@@ -9,6 +9,7 @@ from calculations import get_energy, get_energy_grid
 from plotting import plot_energy, draw_graph_with_ws
 from graph_management import *
 
+
 """ normal 3reg graph """
 def objective_function(params, *args):
   G = args[0]
@@ -26,6 +27,17 @@ def objective_function(params, *args):
 
   return -sum(energies)
 
+def subgraph_energy_grid(G):
+  samples = 64
+  subgraphs = get_subgraphs(G)
+  grid = np.zeros((samples, samples))
+
+  for item in subgraphs:
+    subgraph, edge, occurrence = item
+    qc = qaoa_circuit(subgraph)
+    grid += get_energy_grid(subgraph, qc, edge, samples=64) * occurrence
+
+  return grid
 
 G3 = nx.random_regular_graph(3, 8, seed=42)
 #print(objective_function([.717, .432], (G3)))
@@ -111,23 +123,26 @@ else:  # executed if no break
 Grand = nx.fast_gnp_random_graph(8, .25, seed=3)
 
 # plot subgraphs
-nx.draw_kamada_kawai(Grand, with_labels=False)
-plt.show()
-subgraphs = get_subgraphs(Grand)
-for item in subgraphs:
-  sg, edge, occurrence = item
-  print(occurrence)
-  nx.draw_kamada_kawai(sg, with_labels=False)
-  plt.show()
+#nx.draw_kamada_kawai(Grand, with_labels=False)
+#plt.show()
+#subgraphs = get_subgraphs(Grand)
+#for item in subgraphs:
+#  sg, edge, occurrence = item
+#  print(occurrence)
+#  nx.draw_kamada_kawai(sg, with_labels=False)
+#  plt.show()
 
 ## load & plot energy landscape
-#grid = np.load('./ws-energies/subgraph-optimization/random-graph-energy.npy')
-#plot_energy(grid, show=False)
-#
-#xinit = np.array([2.7, 1.2])
-#np.random.seed(42)
-#
-## optimization
+grid = np.load('./ws-energies/subgraph-optimization/random-graph-special-energy.npy')
+bMin, bMax = -0.25*np.pi, 4.2
+from bigger_beta import special_plot_energy
+special_plot_energy(grid, betaMax=bMax, betaMin=bMin, show=False)
+
+xinit = np.array([2.7, 1.2])
+np.random.seed(42)
+
+# optimization
+#print('optimizing...')
 #skip = [3,5,6]
 #for i in range(8):
 #  xinit = np.random.rand(2) * np.array([2*np.pi, np.pi])

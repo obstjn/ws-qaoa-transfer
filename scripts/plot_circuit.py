@@ -1,11 +1,20 @@
 import matplotlib.pyplot as plt
-from networkx import Graph
+import networkx as nx
 from circuit_generation import qaoa_circuit
 
 
-G = Graph()
-G.add_edges_from([(0,1), (1,2), (1,3), (2,3), (3,4)])
+G = nx.read_adjlist('./graphs/3reg1.graph', nodetype=int)
 
-qc = qaoa_circuit(G, apx_sol=[1,1,0,0,0])
+qc = qaoa_circuit(G)#, apx_sol=[1,0,0,1,0])
 
-qc.draw('mpl', filename='3reg1_ws_circuit.pdf')
+hdata = [d for d in qc.data if d[0].name == 'h']
+costdata = [d for d in qc.data if d[0].name == 'rzz']
+mixerdata = [d for d in qc.data if d[0].name == 'rx']
+qc.data = hdata
+qc.barrier()
+qc.data += costdata
+qc.barrier()
+qc.data += mixerdata
+
+#qc.draw('mpl')#, filename='G3reg1_qc.png')
+

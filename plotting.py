@@ -144,7 +144,7 @@ def draw_graph_with_cut(G, cut, draw_labels=False, show=True):
   if show: plt.show()
 
 
-def draw_graph_with_ws(G, warmstarting=None, show=True):
+def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True):
   if warmstarting is not None:
     if len(warmstarting) != len(G):
       raise ValueError('Invalid warmstarting for the given graph!')
@@ -156,7 +156,7 @@ def draw_graph_with_ws(G, warmstarting=None, show=True):
   cmap = {0.: '#6b00c2', .5: '#1f78b4', 1.: '#ffd500'}
   colors = [cmap[G.nodes[n]['weight']] for n in G.nodes]
   plt.figure()
-  nx.draw_kamada_kawai(G, with_labels=True, node_color=colors, font_color='k')
+  nx.draw_kamada_kawai(G, with_labels=draw_labels, node_color=colors, font_color='k', width=1.4)
   if show:
     plt.show()
   else:

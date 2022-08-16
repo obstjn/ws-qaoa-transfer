@@ -35,7 +35,7 @@ for x in [3,4,5]:
 
 gammaMax, betaMax = 2*np.pi, np.pi
 map_data = np.load('./ws-energies/transferability/transferability_map.npy')
-map_data[0,182] =0
+map_data[0,182] = 0
 #map_data = np.load('./ws-energies/transferability/difference_map.npy')
 _cmap = 'inferno'  # transferability: 'inferno'   difference: 'inferno_r'
 
@@ -94,7 +94,7 @@ for x in [3, 4, 5]:
     labels.append(f'{x}reg{i}')
     
 # Rectangle patch to find current value
-rect = Rectangle((-1, -1), 1, 1, linewidth=2, edgecolor='deepskyblue', facecolor='none', zorder=2)
+rect = Rectangle((-2, -2), 1, 1, linewidth=2, edgecolor='deepskyblue', facecolor='none', zorder=2)
 ax_map.add_patch(rect)
 
 # map labels

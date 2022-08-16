@@ -1,0 +1,3 @@
+The numbering of the energies for the 3reg graphs are in base 3 ( having 0, .5 and 1)
+From 4reg and onwards the numbering is in base 2 since only 0 and 1 are used as warm-start
+

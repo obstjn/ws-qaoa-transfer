@@ -72,7 +72,6 @@ def get_energy_grid(G, qaoa_qc, edge, gammaMax=2*np.pi, betaMax=np.pi, samples=1
   gammas, betas = np.mgrid[0:gammaMax:gammaMax/samples, 0:betaMax:betaMax/samples]
   result = np.empty((samples,samples))
 
-  print('Calculating energy:')
   for i in range(samples):
     for j in range(samples):
       result[i,j] = get_energy(G, qaoa_qc, gammas[i,j], betas[i,j], edge)

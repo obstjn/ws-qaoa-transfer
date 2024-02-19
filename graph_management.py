@@ -1,6 +1,7 @@
 import numpy as np
 import networkx as nx
 from networkx import Graph
+from itertools import product
 
 
 def iso_in_dict(G1, apx_sol1, iso_dict):
@@ -35,9 +36,8 @@ def iso_in_dict(G1, apx_sol1, iso_dict):
 
 
 def ws_hashing(apx_sol):
-  """ number of 0s, .5s and ones in tuple [.5, .5, 1] --> (0, 2, 1) """
+  """ number of 0s and ones in tuple [0, 0, 1] --> (2, 1) """
   ws_hash = (np.count_nonzero(apx_sol == 0.),
-             np.count_nonzero(apx_sol == .5), 
              np.count_nonzero(apx_sol == 1.))
   return ws_hash
 
@@ -163,3 +163,44 @@ def get_ws_subgraphs(G, apx_sol):
   return subgraphs
 
 
+def get_relevant_warmstartings(G):
+  """ get all warmstartings for graph G up to isomorphism """
+  iso_dict = {}  # stores the graphs with in a simple hash table
+  warmstartings = []
+  candidates = list(product([0, 1], repeat=len(G)))
+  # only check the first half, as all other are isos
+  candidates = candidates[:len(candidates)//2]
+
+  for apx_sol in candidates:
+      ws = np.array(apx_sol[::-1])
+
+      if iso_in_dict(G, ws, iso_dict) or iso_in_dict(G, np.abs(ws-1), iso_dict):
+          continue
+      else:
+          # hash of the warm start
+          ws_hash = ws_hashing(ws)
+
+          # check if hash is in dict
+          if ws_hash in iso_dict.keys():
+              iso_dict[ws_hash].append(ws)
+          else:
+              iso_dict[ws_hash] = [ws]
+          warmstartings.append(ws)
+          
+  warmstartings = np.array(warmstartings)
+
+  return warmstartings
+
+def generate_graph(left_degree, right_degree, num_merged_nodes):
+  """ Generate a graph with a central edge. The two nodes get 
+  left/right_degree neighbors each. The number num_merged_nodes 
+  gives how many nodes will be merged."""
+
+  G = Graph()
+  edges = [(0,1)]  # central edge
+  edges.extend([(0, k+2) for k in range(left_degree)])  # neighbors of node 0
+  n = left_degree + 2 - num_merged_nodes  # reuse existing nodes
+  edges.extend([(1, k+n) for k in range(right_degree)])  # neighbors of node 1
+
+  G.add_edges_from(edges)
+  nx.convert_node_labels_to_integers(G)

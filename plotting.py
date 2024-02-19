@@ -4,12 +4,16 @@ import os
 import networkx as nx
 
 from matplotlib.ticker import FormatStrFormatter
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, filename=None, show=True):
-  fig, ax = plt.subplots()
+def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=None, filename=None, show=True):
+  if axes is None:
+    fig, ax = plt.subplots()
+  else: 
+    ax = axes
   ax.set_title(title)
   img = ax.imshow(energy_grid, cmap='inferno', origin='lower', extent=[0, betaMax, 0, gammaMax])
-  plt.colorbar(img)
+  # plt.colorbar(img)
 
   ax.set_aspect(betaMax/gammaMax)
   ax.set_xlabel(r'$\beta$')
@@ -144,21 +148,35 @@ def draw_graph_with_cut(G, cut, draw_labels=False, show=True):
   if show: plt.show()
 
 
-def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True):
+def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True, axes=None):
+
+  colors = None
   if warmstarting is not None:
     if len(warmstarting) != len(G):
       raise ValueError('Invalid warmstarting for the given graph!')
     apx_sol = np.array(warmstarting)
     attrs = {i: apx_sol[i] for i in range(len(apx_sol))}
     nx.set_node_attributes(G, attrs, name='weight')
+    # define colors
+    cmap = {0.: '#6b00c2', .5: '#1f78b4', 1.: '#ffd500'}
+    colors = [cmap[G.nodes[n]['weight']] for n in G.nodes]
 
   # plotting
-  cmap = {0.: '#6b00c2', .5: '#1f78b4', 1.: '#ffd500'}
-  colors = [cmap[G.nodes[n]['weight']] for n in G.nodes]
-  plt.figure()
-  nx.draw_kamada_kawai(G, with_labels=draw_labels, node_color=colors, font_color='k', width=1.4)
+  if axes is None:
+      plt.figure()
+  # additional_options = {'font_size': 6, 'node_size': 100}
+  nx.draw_kamada_kawai(G, with_labels=draw_labels, node_color=colors, font_color='k', width=1.4, ax=axes)#, **additional_options)
   if show:
     plt.show()
   else:
     pass
+
+
+def draw_landscape_and_graph(energy_grid, G, warmstarting=None, show=True):
+  fig = plt.figure(figsize=(8,4))
+  left_ax = fig.add_subplot(1, 2, 1)
+  plot_energy(energy_grid, axes=left_ax, show=False)
+
+  right_ax = fig.add_subplot(1, 2, 2)
+  draw_graph_with_ws(G, warmstarting, axes=right_ax, show=True) 
 

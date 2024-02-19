@@ -46,6 +46,6 @@ cmap = {0.: '#6b00c2', .5: '#1f78b4', 1.: '#ffd500'}
 colors = [cmap[G.nodes[n]['weight']] for n in G.nodes]
 plt.figure()
 nx.draw_kamada_kawai(G, with_labels=False, node_color=colors, font_color='k', width=1.4, edge_color=edge_colors)
-#plt.show()
-plt.savefig('3reg_graph_ws.png')
+plt.show()
+#plt.savefig('3reg_graph_ws.png')
 

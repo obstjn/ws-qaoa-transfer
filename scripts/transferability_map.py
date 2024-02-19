@@ -47,10 +47,13 @@ for i in range(n):
 
 
 # plotting
+cm = 1 / 2.54
+#fig, ax = plt.subplots(figsize=(38.0*cm, 30.4*cm))
 fig, ax = plt.subplots(figsize=(26.0, 16.0))
 ax.set_xlabel('Donor subgraph', fontsize='x-large')
 ax.set_ylabel('Acceptor subgraph', fontsize='x-large')
-img = ax.imshow(transfer_map, cmap='inferno', interpolation='none')
+img = ax.imshow(transfer_map, cmap='inferno', interpolation='nearest')  # transferability
+#img = ax.imshow(transfer_map, cmap='inferno_r', interpolation='nearest')  # avg-diff
 plt.colorbar(img)
 
 # line seperators
@@ -74,3 +77,5 @@ ax.xaxis.tick_top()
 plt.title('Transferability coefficients', fontsize='30', y=1.05)
 plt.show()
 #plt.savefig('transferability_map.pdf')
+#fig.tight_layout()
+#plt.savefig('difference_map.svg', bbox_inches='tight', format='svg', dpi=400)

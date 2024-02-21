@@ -172,8 +172,8 @@ def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True, axes=N
     pass
 
 
-def draw_landscape_and_graph(energy_grid, G, warmstarting=None, show=True):
-  fig = plt.figure(figsize=(8,4))
+def draw_landscape_and_graph(energy_grid, G, warmstarting=None, title=None, show=True):
+  fig = plt.figure(title, figsize=(16,8))
   left_ax = fig.add_subplot(1, 2, 1)
   plot_energy(energy_grid, axes=left_ax, show=False)
 

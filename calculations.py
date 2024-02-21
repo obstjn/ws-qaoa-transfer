@@ -6,6 +6,7 @@ from qiskit import Aer, execute, BasicAer
 import cvxpy as cp
 from itertools import product
 from scipy.linalg import sqrtm
+import re
 
 
 # Value of a given cut
@@ -189,3 +190,14 @@ def average_difference(donor_grid, acceptor_grid):
   diff = np.abs(donor - acceptor)
   return np.average(diff)
 
+
+def get_graph_ws_and_grind(path: str):
+  """ derives all the necessary data from the energy grid file name. """
+  fname = path.split('/')[-1]
+  graphname = path.split('_')[0]
+  ws = np.array(list(path.split('_')[1]), dtype=int)
+
+  print(fname, graphname, ws)
+  # load graph
+  # generate graph
+  #

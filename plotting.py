@@ -17,12 +17,12 @@ def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=N
   # plt.colorbar(img)
 
   ax.set_aspect(betaMax/gammaMax)
-  ax.set_xlabel(r'$\beta$')
-  ax.set_ylabel(r'$\gamma$')
-  plt.xticks(np.linspace(0, betaMax, 5))
-  plt.yticks(np.linspace(0, gammaMax, 5))
-  ax.xaxis.set_major_formatter(FormatStrFormatter('%.3g'))
-  ax.yaxis.set_major_formatter(FormatStrFormatter('%.3g'))
+  # ax.set_xlabel(r'$\beta$')
+  # ax.set_ylabel(r'$\gamma$')
+  ax.set_xticks(np.linspace(0, betaMax, 3), labels=['0', r'$\frac{\pi}{2}$', r'$\pi$'])
+  ax.set_yticks(np.linspace(0, gammaMax, 3), labels=['0', r'$\pi$', r'$2\pi$'])
+  # ax.xaxis.set_major_formatter(FormatStrFormatter('%.3g'))
+  # ax.yaxis.set_major_formatter(FormatStrFormatter('%.3g'))
   if filename is not None:
     plt.savefig(f'{filename}_energy-landscape.pdf')#, dpi=300)
     plt.close()
@@ -206,6 +206,9 @@ def draw_multiple_landscapes_and_graphs(path_list, rows=1, cols=1):
     fig = plt.figure(figsize=(6,6))
 
     for i, path in enumerate(path_list):
+      # draw graphs only every second row
+      i += (i // cols) * cols
+      # subplot idx starts at 1
       i += 1
       # Get data
       G, ws, grid = get_graph_ws_and_grid(path)

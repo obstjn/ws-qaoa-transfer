@@ -90,6 +90,8 @@ for fname in grid_files:
 #     draw_landscape_and_graph(energy, G, ws)
 
 test_files = ['./test-run/energies/' + f for f in grid_files if '(3-3)-0' in f] 
+# G, ws, grid = get_graph_ws_and_grid(test_files[1])
+# draw_landscape_and_graph(grid,G,ws)
 draw_multiple_landscapes_and_graphs(test_files, rows=3, cols=4)
 
 plt.show()

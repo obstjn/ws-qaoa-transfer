@@ -2,11 +2,13 @@ import networkx as nx
 import numpy as np
 from networkx import Graph
 from qiskit import Aer, execute, BasicAer
+from typing import *
 
 import cvxpy as cp
 from itertools import product
 from scipy.linalg import sqrtm
 import re
+from graph_management import *
 
 
 # Value of a given cut
@@ -191,13 +193,40 @@ def average_difference(donor_grid, acceptor_grid):
   return np.average(diff)
 
 
-def get_graph_ws_and_grind(path: str):
-  """ derives all the necessary data from the energy grid file name. """
-  fname = path.split('/')[-1]
-  graphname = path.split('_')[0]
-  ws = np.array(list(path.split('_')[1]), dtype=int)
+def get_graph_ws_and_grid(grid_path: str) -> Tuple[nx.Graph, np.ndarray, np.ndarray]:
+    """
+    Derives all the necessary data from the energy grid file name.
 
-  print(fname, graphname, ws)
-  # load graph
-  # generate graph
-  #
+    Parameters:
+    grid_path (str): The path to the energy grid file.
+
+    Returns:
+    (nx.Graph, np.ndarray, np.ndarray):
+        G: The nx.Graph object representing the graph
+        ws: The warmstarting data as an np.ndarray
+        grid: The energy grid data as an np.ndArray.
+
+    """
+
+    # Get the graph name from the file name.
+    fname = grid_path.split('/')[-1]
+    # remove file extension
+    id = fname.split('.')[0]
+    # remove warmstarting
+    graphname = '-'.join(id.split('-')[:-1])
+
+    # Get the degree of the left and right nodes and the number of merged nodes.
+    left_degree = int(re.findall(r'\d+', graphname)[0])
+    right_degree = int(re.findall(r'\d+', graphname)[1])
+    num_merged_nodes = int(re.findall(r'\d+', graphname)[2])
+
+    # Generate the graph object
+    G = generate_graph(left_degree, right_degree, num_merged_nodes)
+
+    # Get the warmstarting data.
+    ws = np.array(list(id.split('-')[-1]), dtype=int)
+
+    # Load the energy grid data
+    grid = np.load(grid_path)
+
+    return G, ws, grid

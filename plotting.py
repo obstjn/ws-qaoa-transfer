@@ -5,6 +5,7 @@ import networkx as nx
 
 from matplotlib.ticker import FormatStrFormatter
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from calculations import *
 
 def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=None, filename=None, show=True):
   if axes is None:
@@ -96,13 +97,13 @@ def save_contents(G, qaoa_qc, energy_grid, name, hyperparams=None, folder=None):
   nx.write_weighted_edgelist(G, f'{path}.graph')
   nx.draw(G, with_labels=False)
   plt.savefig(f'{path}_graph.png', dpi=150)
-  transpile(qaoa_qc, basis_gates=['h', 'rz', 'rx', 'cx']).draw('mpl', filename=f'{path}_qaoa.png')
+  # transpile(qaoa_qc, basis_gates=['h', 'rz', 'rx', 'cx']).draw('mpl', filename=f'{path}_qaoa.png')
   np.save(f'{path}_energy.npy', energy_grid)
   plot_energy(energy_grid, filename=path)
 
 
 """ 3D-Plot """
-def plot_3d():
+def plot_3d(energy_grid):
   samples = 65
   gammas, betas = np.mgrid[0:2*np.pi:samples*1j, 0:np.pi:samples*1j]
   fig, ax = plt.subplots(dpi=150, subplot_kw={"projection": "3d"})
@@ -173,10 +174,48 @@ def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True, axes=N
 
 
 def draw_landscape_and_graph(energy_grid, G, warmstarting=None, title=None, show=True):
-  fig = plt.figure(title, figsize=(16,8))
-  left_ax = fig.add_subplot(1, 2, 1)
-  plot_energy(energy_grid, axes=left_ax, show=False)
+    """
+    This function visualizes the energy landscape of a problem and the associated graph.
+    Parameters:
+    energy_grid (array-like): An array, providing the values for the landscape.
+    G (nx.Graph): A sparse matrix or a graph-like object.
+    warmstarting (array-like): An array with len(G) many entries that are either 0 or 1.
+    title (str): An optional title for the plot. If `None`, the function will not include a title in the resulting figure.
+    show (bool): An optional boolean variable indicating whether to show the resulting plot or not. Default is `True` (show)
+    """
+    # Initialize figure
+    fig = plt.figure(title, figsize=(12,6))
 
-  right_ax = fig.add_subplot(1, 2, 2)
-  draw_graph_with_ws(G, warmstarting, axes=right_ax, show=True) 
+    # Create two subplots
+    left_ax = fig.add_subplot(1, 2, 1)
+    right_ax = fig.add_subplot(1, 2, 2)
 
+    # Plot the energy landscape on the left subplot
+    plot_energy(energy_grid, axes=left_ax, show=False)
+
+    # Draw the graph with warm-starting on the right subplot
+    draw_graph_with_ws(G, warmstarting, axes=right_ax, show=show)
+
+
+def draw_multiple_landscapes_and_graphs(path_list, rows=1, cols=1):
+
+    # Space for graph & landscape
+    rows *= 2
+
+    # Initialize figure
+    fig = plt.figure(figsize=(6,6))
+
+    for i, path in enumerate(path_list):
+      i += 1
+      # Get data
+      G, ws, grid = get_graph_ws_and_grid(path)
+
+      # Create subplots for graph and energy
+      graph_ax = fig.add_subplot(rows, cols, i)
+      energy_ax = fig.add_subplot(rows, cols, i+cols)
+
+      # Plot the energy landscape on the left subplot
+      plot_energy(grid, axes=energy_ax, show=False)
+
+      # Draw the graph with warm-starting on the right subplot
+      draw_graph_with_ws(G, ws, axes=graph_ax, show=False)

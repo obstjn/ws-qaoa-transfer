@@ -216,6 +216,10 @@ def generate_graph(left_degree: int, right_degree: int, num_merged_nodes: int) -
     on the other side.
     """
 
+    # Account for central edge
+    left_degree -= 1
+    right_degree -= 1
+
     # Create a Graph object to represent the graph.
     G = Graph()
 

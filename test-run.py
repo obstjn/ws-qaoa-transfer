@@ -73,16 +73,23 @@ for fname in grid_files:
 #         continue
 #     draw_landscape_and_graph(grid, G, warmstarting=ws, title=name)
 
-first = '(5-5)-0-0010001000'
-draw_landscape_and_graph(*data[first], title=first)
-second = '(3-3)-0-000000'
-draw_landscape_and_graph(*data[second], title=second)
 
-a = data[first][0]
-b = data[second][0]
-plot_energy(a-b)
+# first = '(5-5)-0-0010001000'
+# draw_landscape_and_graph(*data[first], title=first)
+# second = '(3-3)-0-000000'
+# draw_landscape_and_graph(*data[second], title=second)
+
+# a = data[first][0]
+# b = data[second][0]
+# plot_energy(a-b)
+
 
 # plot landscapes
 # for energy, G, warmstarting in zip(grids, graphs, warmstartings):
 #     ws = np.array([int(digit) for digit in warmstarting], dtype=int)
 #     draw_landscape_and_graph(energy, G, ws)
+
+test_files = ['./test-run/energies/' + f for f in grid_files if '(3-3)-0' in f] 
+draw_multiple_landscapes_and_graphs(test_files, rows=3, cols=4)
+
+plt.show()

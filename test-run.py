@@ -67,31 +67,14 @@ for fname in grid_files:
 
 
 # ~~~~~~~~~~~~~~~ Plotting ~~~~~~~~~~~~~~ #
-# plot grid
-# for name, (grid, G, ws) in data.items():
-#     if not name.startswith('(2-3)-0'):
-#         continue
-#     draw_landscape_and_graph(grid, G, warmstarting=ws, title=name)
 
+grid_files = sorted(os.listdir('./test-run/energies'))
+test_files = ['./test-run/energies/' + f for f in grid_files if '(3-3)-1' in f]
+# For reorder purposes add None
+test_files.append(None)
+# reorder the files
+test_files = [test_files[i] for i in (0,2,3,-1,-1,7,-1,4,9,1,5,6)] 
 
-# first = '(5-5)-0-0010001000'
-# draw_landscape_and_graph(*data[first], title=first)
-# second = '(3-3)-0-000000'
-# draw_landscape_and_graph(*data[second], title=second)
-
-# a = data[first][0]
-# b = data[second][0]
-# plot_energy(a-b)
-
-
-# plot landscapes
-# for energy, G, warmstarting in zip(grids, graphs, warmstartings):
-#     ws = np.array([int(digit) for digit in warmstarting], dtype=int)
-#     draw_landscape_and_graph(energy, G, ws)
-
-test_files = ['./test-run/energies/' + f for f in grid_files if '(3-3)-0' in f] 
-# G, ws, grid = get_graph_ws_and_grid(test_files[1])
-# draw_landscape_and_graph(grid,G,ws)
 draw_multiple_landscapes_and_graphs(test_files, rows=3, cols=4)
 
 plt.show()

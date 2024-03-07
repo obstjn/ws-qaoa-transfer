@@ -36,6 +36,7 @@ def ws_initial_state(apx_sol, eps=0.5):
       c = 1-eps
     theta = 2 * np.arcsin(np.sqrt(c))
     qc.ry(theta, i)
+  qc.barrier()
   return qc
 
 
@@ -46,6 +47,7 @@ def ws_mixer(beta, apx_sol, eps=0.5):
     # LSB of apx_sol is q0
     apx_sol = apx_sol[::-1]
   qc = QuantumCircuit(len(apx_sol))
+  qc.barrier()
   for i in range(len(apx_sol)):
     c = float(apx_sol[i])
     if c < eps:
@@ -63,8 +65,10 @@ def qaoa_circuit(G: Graph, apx_sol=None, eps=0.1):
 
   operator = operator_from_graph(G)
 
-  gamma = Parameter(r'$\gamma$')
-  beta = Parameter(r'$\beta$')
+  # gamma = Parameter(r'$\gamma$')
+  # beta = Parameter(r'$\beta$')
+  gamma = Parameter(r'\gamma')
+  beta = Parameter(r'\beta')
 
   if apx_sol is not None:
     ws_init_qc = ws_initial_state(apx_sol, eps=eps)

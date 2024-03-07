@@ -4,8 +4,14 @@ import os
 import networkx as nx
 
 from matplotlib.ticker import FormatStrFormatter
-from mpl_toolkits.axes_grid1 import make_axes_locatable
 from calculations import *
+
+# Use Latex font
+plt.rcParams.update({
+    "text.usetex": True,
+    "font.family": "Helvetica"
+})
+
 
 def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=None, filename=None, show=True):
   if axes is None:
@@ -19,10 +25,9 @@ def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=N
   ax.set_aspect(betaMax/gammaMax)
   # ax.set_xlabel(r'$\beta$')
   # ax.set_ylabel(r'$\gamma$')
-  ax.set_xticks(np.linspace(0, betaMax, 3), labels=['0', r'$\frac{\pi}{2}$', r'$\pi$'])
-  ax.set_yticks(np.linspace(0, gammaMax, 3), labels=['0', r'$\pi$', r'$2\pi$'])
-  # ax.xaxis.set_major_formatter(FormatStrFormatter('%.3g'))
-  # ax.yaxis.set_major_formatter(FormatStrFormatter('%.3g'))
+  ax.set_xticks(np.linspace(0, betaMax, 3), labels=[r'$0$', r'$\frac{\pi}{2}$', r'$\pi$'], fontsize=20)
+  ax.set_yticks(np.linspace(0, gammaMax, 3), labels=[r'$0$', r'$\pi$', r'$2\pi$'], fontsize=20)
+
   if filename is not None:
     plt.savefig(f'{filename}_energy-landscape.pdf')#, dpi=300)
     plt.close()
@@ -31,6 +36,8 @@ def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=N
         plt.show()
     else:
         pass
+
+  return img
 
 
 def plot_energy_with_marker(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, marker='max', title=None, filename=None, show=True, a=1.0):
@@ -149,12 +156,25 @@ def draw_graph_with_cut(G, cut, draw_labels=False, show=True):
   if show: plt.show()
 
 
-def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True, axes=None):
+def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True, axes=None, **kwargs):
+  """
+  Draws a graph with warm-starting and optional attributes.
 
+  Parameters:
+  G (nx.Graph): The graph object to draw.
+  warmstarting (np.ndarray): An optional numpy array that specifies the warmstarting.
+  draw_labels (bool): If True, labels are drawn on nodes.
+  show (bool): If True, the resulting plot is shown. Otherwise, the plot is hidden.
+  axes (optional) (matplotlib.pyplot.Axes): The matplotlib object to use for plotting. Useful if multiple plots are placed on a figure.
+  Additional keyword arguments: pass through any additional keyword arguments to the nx.draw_kamada_kawai function.
+
+  """
   colors = None
   if warmstarting is not None:
+    # Check if warmstarting fits to graph
     if len(warmstarting) != len(G):
       raise ValueError('Invalid warmstarting for the given graph!')
+    # Assign warmstarting to the nodes
     apx_sol = np.array(warmstarting)
     attrs = {i: apx_sol[i] for i in range(len(apx_sol))}
     nx.set_node_attributes(G, attrs, name='weight')
@@ -165,12 +185,10 @@ def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True, axes=N
   # plotting
   if axes is None:
       plt.figure()
-  # additional_options = {'font_size': 6, 'node_size': 100}
-  nx.draw_kamada_kawai(G, with_labels=draw_labels, node_color=colors, font_color='k', width=1.4, ax=axes)#, **additional_options)
-  if show:
-    plt.show()
-  else:
-    pass
+  nx.draw_kamada_kawai(G, with_labels=draw_labels, node_color=colors, font_color='k', width=1.4, ax=axes, **kwargs)
+
+  # Show plot if specified
+  if show: plt.show()
 
 
 def draw_landscape_and_graph(energy_grid, G, warmstarting=None, title=None, show=True):
@@ -197,18 +215,31 @@ def draw_landscape_and_graph(energy_grid, G, warmstarting=None, title=None, show
     draw_graph_with_ws(G, warmstarting, axes=right_ax, show=show)
 
 
-def draw_multiple_landscapes_and_graphs(path_list, rows=1, cols=1):
+def draw_multiple_landscapes_and_graphs(path_list, rows=1, cols=1, figsize=(7.166, 7.166)):
+    """
+    Draws multiple energy landscapes and associated graphs from a list of energy grid file paths.
+    Parameters:
+    path_list: A list of file paths to the energy grid files.
+    rows: Set the number of rows to draw. Defaults to 1.
+    cols: Set the number of columns to draw. Defaults to 1.
+    figsize: Set the size of the figure. Defaults to (7.166, 7.166)
 
+    Returns: None.
+    """
     # Space for graph & landscape
     rows *= 2
 
-    # Initialize figure
-    fig = plt.figure(figsize=(6,6))
+    # Initialize figure (\textwidth=7.166) (\columnwidth=3.5)
+    fig = plt.figure(figsize=figsize, constrained_layout=True)
 
     for i, path in enumerate(path_list):
-      # draw graphs only every second row
+      # Skip empty spots
+      if path is None:
+        continue
+
+      # Draw graphs only every second row
       i += (i // cols) * cols
-      # subplot idx starts at 1
+      # Subplot idx starts at 1
       i += 1
       # Get data
       G, ws, grid = get_graph_ws_and_grid(path)
@@ -216,9 +247,11 @@ def draw_multiple_landscapes_and_graphs(path_list, rows=1, cols=1):
       # Create subplots for graph and energy
       graph_ax = fig.add_subplot(rows, cols, i)
       energy_ax = fig.add_subplot(rows, cols, i+cols)
+      graph_ax.set_aspect(0.9)
 
       # Plot the energy landscape on the left subplot
-      plot_energy(grid, axes=energy_ax, show=False)
+      img = plot_energy(grid, axes=energy_ax, show=False)
 
       # Draw the graph with warm-starting on the right subplot
-      draw_graph_with_ws(G, ws, axes=graph_ax, show=False)
+      additional_options = {'font_size': 6, 'node_size': 80}
+      draw_graph_with_ws(G, ws, draw_labels=False, axes=graph_ax, show=False, **additional_options)

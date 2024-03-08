@@ -12,7 +12,7 @@ from graph_management import *
 # ~~~~~~~~~~~~~~~ Graphs ~~~~~~~~~~~~~~~ #
 # read graphs
 graph_files = sorted(os.listdir('./test-run/graphs'))
-graph_files = graph_files[16:]
+# graph_files = graph_files[16:]
 graph_names = [fname.split('.')[0] for fname in graph_files]
 graphs =[nx.read_adjlist(f'./test-run/graphs/{graph_fname}', nodetype=int) for graph_fname in graph_files]
 
@@ -24,7 +24,7 @@ graphs =[nx.read_adjlist(f'./test-run/graphs/{graph_fname}', nodetype=int) for g
 # print(f'Landscape total: {sum([len(get_relevant_warmstartings(G)) for G in graphs])}')
 # k = 0
 
-# ~~~~~~~~~~~~~ Calculation ~~~~~~~~~~~~ #
+# # ~~~~~~~~~~~~~ Calculation ~~~~~~~~~~~~ #
 # grids = []
 # for i, (G, graph_name) in enumerate(zip(graphs, graph_names)):
 #     warmstartings = get_relevant_warmstartings(G)

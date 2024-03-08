@@ -4,27 +4,50 @@ from networkx import Graph
 from itertools import product
 
 
-def iso_in_dict(G1, apx_sol1, iso_dict):
-  # preselect relevant graphs with ws_hash (same # of 0s, ...)
+
+def iso_in_dict(G, apx_sol1, iso_dict):
+  """
+  Checks if an isomorphic graph exists within a dictionary of graphs.
+
+  Parameters:
+    G (nx.Graph): The input graph
+    apx_sol1 (list): The approximate solution for the given graph
+    iso_dict (dict): A dictionary of graphs, indexed by a hash function.
+
+  Returns:
+    bool: True if an isomorphic graph exists, False otherwise.
+  """
+
+  # Copy the graph
+  G1 = G.copy()
+  # Pre-select relevant graphs with ws_hash (same # of 0s, ...)
   ws_hash = ws_hashing(apx_sol1)
 
+  # Check if a candidate is already in the dictionary
   if ws_hash in iso_dict.keys():
-    # add approximate solution to G1 as 'weight'
+    # Add the approximate solution to G1 as 'weight'
     attrs = {i: apx_sol1[i] for i in range(len(apx_sol1))}
     nx.set_node_attributes(G1, attrs, 'weight')
+    # Mark the central edge
+    attrs = {e: 0 for e in G1.edges}
+    attrs[(0,1)] = 1
+    nx.set_edge_attributes(G1, attrs, 'weight')
     # Graph to compare to 
-    G2 = Graph()
-    G2.add_edges_from(G1.edges())
+    G2 = G.copy()
 
     # check every candidate for isomorphism
     for apx_sol2 in iso_dict[ws_hash]:
-      # add approximate solution to G2 as 'weight'
+      # Add approximate solution to G2 as 'weight'
       attrs = {i: apx_sol2[i] for i in range(len(apx_sol2))}
       nx.set_node_attributes(G2, attrs, 'weight')
+      # Mark the central edge (important for random graphs)
+      attrs = {e: 0 for e in G2.edges}
+      attrs[(0,1)] = 1
+      nx.set_edge_attributes(G2, attrs, 'weight')
 
-      # isomorphism check
+      # Isomorphism check
       comp = lambda g1, g2: g1['weight'] == g2['weight']
-      if nx.is_isomorphic(G1, G2, node_match=comp):
+      if nx.is_isomorphic(G1, G2, node_match=comp, edge_match=comp):
         # found iso
         return True
 

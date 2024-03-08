@@ -25,8 +25,10 @@ def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=N
   ax.set_aspect(betaMax/gammaMax)
   # ax.set_xlabel(r'$\beta$')
   # ax.set_ylabel(r'$\gamma$')
-  ax.set_xticks(np.linspace(0, betaMax, 3), labels=[r'$0$', r'$\frac{\pi}{2}$', r'$\pi$'], fontsize=20)
-  ax.set_yticks(np.linspace(0, gammaMax, 3), labels=[r'$0$', r'$\pi$', r'$2\pi$'], fontsize=20)
+  # ax.set_xticks(np.linspace(0, betaMax, 3), labels=[r'$0$', r'$\frac{\pi}{2}$', r'$\pi$'], fontsize=20)
+  # ax.set_yticks(np.linspace(0, gammaMax, 3), labels=[r'$0$', r'$\pi$', r'$2\pi$'], fontsize=20)
+  ax.set_xticks([])
+  ax.set_yticks([])
 
   if filename is not None:
     plt.savefig(f'{filename}_energy-landscape.pdf')#, dpi=300)
@@ -243,6 +245,7 @@ def draw_multiple_landscapes_and_graphs(path_list, rows=1, cols=1, figsize=(7.16
       i += 1
       # Get data
       G, ws, grid = get_graph_ws_and_grid(path)
+      # draw_landscape_and_graph(grid, G, warmstarting=ws)
 
       # Create subplots for graph and energy
       graph_ax = fig.add_subplot(rows, cols, i)

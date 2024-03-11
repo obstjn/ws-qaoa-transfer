@@ -190,12 +190,19 @@ def get_relevant_warmstartings(G):
   """ get all warmstartings for graph G up to isomorphism """
   iso_dict = {}  # stores the graphs with in a simple hash table
   warmstartings = []
-  candidates = list(product([0, 1], repeat=len(G)))
+  candidates = []
   # only check the first half, as all other are isos
-  candidates = candidates[:len(candidates)//2]
+  # candidates = candidates[:len(candidates)//2]
+  for c in list(product([0, 1], repeat=len(G))):
+    if (c[0] == 1 and c[1] == 1) or (c[0] == 0 and c[1] == 1):
+      continue
+    else:
+      candidates.append(c)
+
 
   for apx_sol in candidates:
-      ws = np.array(apx_sol[::-1])
+      # ws = np.array(apx_sol[::-1])
+      ws = np.array(apx_sol)
 
       if iso_in_dict(G, ws, iso_dict) or iso_in_dict(G, np.abs(ws-1), iso_dict):
           continue
@@ -210,6 +217,15 @@ def get_relevant_warmstartings(G):
               iso_dict[ws_hash] = [ws]
           warmstartings.append(ws)
           
+  
+  # normalize
+  # normalized = []
+  # for ws in warmstartings:
+  #   if (ws[0] == 1 and ws[1] == 1) or (ws[0] == 0 and ws[1] == 1):
+  #     ws = np.abs(ws - 1)
+  #   normalized.append(ws)
+
+  # warmstartings = np.array(normalized)
   warmstartings = np.array(warmstartings)
 
   return warmstartings

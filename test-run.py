@@ -43,9 +43,10 @@ graphs =[nx.read_adjlist(f'./test-run/graphs/{graph_fname}', nodetype=int) for g
 
 #         # save results
 #         grids.append(grid)
-#         np.save(f'./test-run/energies/{graph_name}-{ws_name}.npy', grid)
+#         np.save(f'./energies/{graph_name}-{ws_name}.npy', grid)
 # print('\n')
 # print('Finished: ' + time.strftime('%H:%M:%S', time.localtime()))
+# exit()
     
 # ~~~~~~~~~~~~~~~ Loading ~~~~~~~~~~~~~~ #
 # Load grids from directory

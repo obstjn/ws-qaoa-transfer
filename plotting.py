@@ -184,10 +184,13 @@ def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True, axes=N
     cmap = {0.: '#6b00c2', .5: '#1f78b4', 1.: '#ffd500'}
     colors = [cmap[G.nodes[n]['weight']] for n in G.nodes]
 
+    edge_colors = ['k']*len(G.edges)
+    edge_colors[0] = 'darkorange'
+
   # plotting
   if axes is None:
       plt.figure()
-  nx.draw_kamada_kawai(G, with_labels=draw_labels, node_color=colors, font_color='k', width=1.4, ax=axes, **kwargs)
+  nx.draw_kamada_kawai(G, with_labels=draw_labels, node_color=colors, edge_color=edge_colors, font_color='k', width=1.4, ax=axes, **kwargs)
 
   # Show plot if specified
   if show: plt.show()

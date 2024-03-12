@@ -210,6 +210,8 @@ def get_graph_ws_and_grid(grid_path: str) -> Tuple[nx.Graph, np.ndarray, np.ndar
 
     # Get the graph name from the file name.
     fname = grid_path.split('/')[-1]
+    # Remove order number if there is any.
+    fname = fname.split('_')[-1]
     # remove file extension
     id = fname.split('.')[0]
     # remove warmstarting

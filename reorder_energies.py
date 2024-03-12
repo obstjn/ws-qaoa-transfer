@@ -58,5 +58,5 @@ for j in range(1, 6):
 for i, path in enumerate(files):
     file = path.split('/')[-1]
     grid = np.load(path)
-    np.save(f'./energies/ordered/{i}_{file}', grid)
+    np.save(f'./energies/ordered/{i:03}_{file}', grid)
 

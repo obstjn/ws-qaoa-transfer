@@ -4,6 +4,11 @@ import os
 from plotting import *
 
 
+# Use Latex font
+plt.rcParams.update({
+    "font.family": "Helvetica"
+})
+
 # Load files
 grid_files = sorted(os.listdir('./test-run/energies'))
 
@@ -29,5 +34,5 @@ node_split_files = [files_0[9], files_1[1], files_1[8], files_2[1]]
 draw_multiple_landscapes_and_graphs(node_split_files , rows=1, cols=4, figsize=(7.166, 7.166/3))
 
 # show
-# plt.show()
-# plt.savefig('node_split.pdf', bbox_inches='tight')
+plt.show()
+# plt.savefig('node_split.pdf')

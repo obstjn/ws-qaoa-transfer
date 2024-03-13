@@ -1,69 +1,58 @@
 import os
-
 import numpy as np
-import networkx as nx
-from networkx import Graph
 import matplotlib.pyplot as plt
 
-
-from circuit_generation import *
 from calculations import *
 from plotting import *
 from graph_management import *
 
 
-
-
 energy_grids = sorted(os.listdir('./energies/ordered'))
-
 n = len(energy_grids)
-transfer_map = np.empty((n, n))
-diff_map = np.empty((n, n))
-
-# for i in range(n):
-#   acceptor = np.load(f'./energies/ordered/{energy_grids[i]}')
-#   for j in range(n):
-#     donor = np.load(f'./energies/ordered/{energy_grids[j]}')
-#     transfer_map[i,j] = transferability_coeff(donor, acceptor)
-#     diff_map[i,j] = average_difference(donor, acceptor)
-
-# np.save('./test-run/transferability-map.npy', transfer_map)
-# np.save('./test-run/diff-map.npy', diff_map)
-# exit()
 
 transfer_map = np.load('./test-run/transferability-map.npy')
 diff_map = np.load('./test-run/diff-map.npy')
 
 # plotting
-cm = 1 / 2.54
-#fig, ax = plt.subplots(figsize=(38.0*cm, 30.4*cm))
-fig, ax = plt.subplots(figsize=(7.166, 7.166))
-ax.set_xlabel('Donor subgraph', fontsize='x-large')
-ax.set_ylabel('Acceptor subgraph', fontsize='x-large')
-img = ax.imshow(transfer_map, cmap='inferno', interpolation='nearest')  # transferability
-# img = ax.imshow(diff_map, cmap='inferno_r', interpolation='nearest')  # avg-diff
-plt.colorbar(img)
+fig, ax = plt.subplots(figsize=(7.166, 5.95))
+# fig.tight_layout()
+plt.subplots_adjust(left=0.04, right=1.06, top=0.95, bottom=0.04)
+ax.set_xlabel('Donor subgraph', fontsize=10)
+ax.set_ylabel('Acceptor subgraph', fontsize=10)
+# img = ax.imshow(transfer_map, cmap='inferno', interpolation='nearest')  # transferability
+img = ax.imshow(diff_map, cmap='inferno_r', interpolation='nearest')  # avg-diff
+cbar = plt.colorbar(img, aspect=40)
 
 # line seperators
 location = -0.5  # seperator between pixels
+label_location = 0
 ticks = []
 labels = []
-# for x in [3, 4, 5]:
-#   for i in range(x):
-#     numbers = eval(f'ws_numbers_{x}reg{i}')
-#     location += len(numbers)
-#     if location < len(energy_grids) - 1:  # skip last lines
-#       ax.axvline(x=location, color='white', linestyle='--')
-#       ax.axhline(y=location, color='white', linestyle='--')
 
-#     ticks.append(location - len(numbers)/2)
-#     labels.append(f'{x}reg{i}')
-    
-# plt.xticks(ticks, labels)
-# plt.yticks(ticks, labels)
+# (j-k)-m
+for j in range(1, 6):
+    for k in range(j, 6):
+        for m in range(j):
+            landscape_names = sorted([name for name in energy_grids if f'({j}-{k})-{m}' in name])
+            location += len(landscape_names)
+            label_location += len(landscape_names)
+            if location < len(energy_grids) - 1 and m < (j-1):  # skip last lines and degree changes
+                ax.axvline(x=location, color='white', linestyle='--', linewidth=0.4)
+                ax.axhline(y=location, color='white', linestyle='--', linewidth=0.4)
+
+        ax.axvline(x=location, color='white', linestyle='-', linewidth=0.7)
+        ax.axhline(y=location, color='white', linestyle='-', linewidth=0.7)
+
+        ticks.append(location - label_location/2)
+        labels.append(f'({j}-{k})')
+        label_location = 0
+
+xlabels = ['','','(1-$*$)','','', '','','(2-$*$)',''] + labels[9:]
+ylabels = ['','','(1-$*$)','',''] + labels[5:]
+plt.xticks(ticks, xlabels)
+plt.yticks(ticks, ylabels)
 ax.xaxis.tick_top()
-plt.title('Transferability coefficients', fontsize='30', y=1.05)
+cbar.set_label('Transferability Coefficient', labelpad=-42)
+# plt.title('Transferability coefficients', fontsize='30', y=1.05)
+# plt.savefig('transferability_map.pdf')
 plt.show()
-#plt.savefig('transferability_map.pdf')
-#fig.tight_layout()
-#plt.savefig('difference_map.svg', bbox_inches='tight', format='svg', dpi=400)

@@ -9,7 +9,7 @@ from calculations import *
 # Use Latex font
 plt.rcParams.update({
     "text.usetex": True,
-    "font.family": "Helvetica"
+    "font.family": "Times"
 })
 
 
@@ -25,10 +25,10 @@ def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=N
   ax.set_aspect(betaMax/gammaMax)
   # ax.set_xlabel(r'$\beta$')
   # ax.set_ylabel(r'$\gamma$')
-  # ax.set_xticks(np.linspace(0, betaMax, 3), labels=[r'$0$', r'$\frac{\pi}{2}$', r'$\pi$'], fontsize=20)
-  # ax.set_yticks(np.linspace(0, gammaMax, 3), labels=[r'$0$', r'$\pi$', r'$2\pi$'], fontsize=20)
-  ax.set_xticks([])
-  ax.set_yticks([])
+  ax.set_xticks(np.linspace(0, betaMax, 3), labels=[r'$0$', r'$\frac{\pi}{2}$', r'$\pi$'], fontsize=20)
+  ax.set_yticks(np.linspace(0, gammaMax, 3), labels=[r'$0$', r'$\pi$', r'$2\pi$'], fontsize=20)
+  # ax.set_xticks([])
+  # ax.set_yticks([])
 
   if filename is not None:
     plt.savefig(f'{filename}_energy-landscape.pdf')#, dpi=300)

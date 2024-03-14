@@ -158,9 +158,14 @@ def get_ws_subgraphs(G, apx_sol):
     subgraph.add_edge(u,v)
     subgraph.add_edges_from([(u,n) for n in G.neighbors(u)])
     subgraph.add_edges_from([(v,n) for n in G.neighbors(v)])
+    # Mark the central edge (important for random graphs)
+    attrs = {e: 0 for e in subgraph.edges}
+    attrs[(u,v)] = 1
+    nx.set_edge_attributes(subgraph, attrs, 'central')
 
     inverted_sg = subgraph.copy()
 
+    # apply apx_sol
     attrs = {i: apx_sol[i] for i in subgraph.nodes}
     nx.set_node_attributes(subgraph, attrs, 'weight')
 
@@ -174,9 +179,10 @@ def get_ws_subgraphs(G, apx_sol):
 
     # iso check
     comp = lambda g1, g2: g1['weight'] == g2['weight']
+    ecomp = lambda g1, g2: g1['central'] == g2['central']
     for item in subgraphs:
       sg, edge, occurrence = item
-      if nx.is_isomorphic(subgraph, sg, node_match=comp) or nx.is_isomorphic(inverted_sg, sg, node_match=comp):  # found iso
+      if nx.is_isomorphic(subgraph, sg, node_match=comp, edge_match=ecomp) or nx.is_isomorphic(inverted_sg, sg, node_match=comp, edge_match=ecomp):  # found iso
         item[2] += 1  # increase occurrence by one
         break
     else:  # executed if no break

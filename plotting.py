@@ -172,6 +172,11 @@ def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True, axes=N
 
   """
   colors = None
+  # Check if attributes are already set
+  if G.nodes[0]:
+    cmap = {0.: '#6b00c2', .5: '#1f78b4', 1.: '#ffd500'}
+    colors = [cmap[G.nodes[n]['weight']] for n in G.nodes]
+
   if warmstarting is not None:
     # Check if warmstarting fits to graph
     if len(warmstarting) != len(G):
@@ -184,8 +189,9 @@ def draw_graph_with_ws(G, warmstarting=None, draw_labels=True, show=True, axes=N
     cmap = {0.: '#6b00c2', .5: '#1f78b4', 1.: '#ffd500'}
     colors = [cmap[G.nodes[n]['weight']] for n in G.nodes]
 
-    edge_colors = ['k']*len(G.edges)
-    edge_colors[0] = 'darkorange'
+  # Color central edge
+  edge_colors = ['k']*len(G.edges)
+  edge_colors[0] = 'darkorange'
 
   # plotting
   if axes is None:

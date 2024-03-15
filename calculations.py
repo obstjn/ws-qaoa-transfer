@@ -8,6 +8,7 @@ import cvxpy as cp
 from itertools import product
 from scipy.linalg import sqrtm
 import re
+import os
 from graph_management import *
 
 
@@ -232,3 +233,42 @@ def get_graph_ws_and_grid(grid_path: str) -> Tuple[nx.Graph, np.ndarray, np.ndar
     grid = np.load(grid_path)
 
     return G, ws, grid
+
+
+def load_landscape_from_graph(G, path='./energies/'):
+  # TODO documentation
+  # (j-k)
+  j = min(G.degree(0), G.degree(1))
+  k = max(G.degree(0), G.degree(1))
+
+  files = sorted(os.listdir(path))
+  # filter files to check
+  files = [file for file in files if f'({j}-{k})' in file]
+
+  for file in files:
+    G1, ws, grid = get_graph_ws_and_grid(path+file)
+
+    # Prepare graphs
+    # apply apx_sol
+    attrs = {i: ws[i] for i in G1.nodes}
+    nx.set_node_attributes(G1, attrs, 'weight')
+    # mark central edge
+    attrs = {e: 0 for e in G1.edges}
+    attrs[(0,1)] = 1
+    nx.set_edge_attributes(G1, attrs, 'central')
+
+    G1_inverted = G1.copy()
+
+    # Graph with inverse ws
+    attrs_inv = {i: np.abs(ws[i]-1) for i in G1_inverted.nodes}
+    nx.set_node_attributes(G1_inverted, attrs_inv, 'weight')
+
+    # iso check
+    comp = lambda g1, g2: g1['weight'] == g2['weight']
+    ecomp = lambda g1, g2: g1['central'] == g2['central']
+    if nx.is_isomorphic(G, G1, node_match=comp, edge_match=ecomp) or nx.is_isomorphic(G, G1_inverted, node_match=comp, edge_match=ecomp):
+      # found iso
+      return grid
+
+  # no iso found
+  raise ValueError(f"Could not find isomorphic graph in {path}")

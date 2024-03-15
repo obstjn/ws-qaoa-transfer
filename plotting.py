@@ -18,15 +18,19 @@ def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=N
     fig, ax = plt.subplots()
   else: 
     ax = axes
-  ax.set_title(title)
+
+  fontsize = 10
+  ax.set_title(title, fontsize=fontsize)
+
   img = ax.imshow(energy_grid, cmap='inferno', origin='lower', extent=[0, betaMax, 0, gammaMax])
-  # plt.colorbar(img)
+  cbar = plt.colorbar(img, ax=ax, fraction=0.0458, pad=0.04)
+  cbar.ax.tick_params(labelsize=fontsize)
 
   ax.set_aspect(betaMax/gammaMax)
   # ax.set_xlabel(r'$\beta$')
   # ax.set_ylabel(r'$\gamma$')
-  ax.set_xticks(np.linspace(0, betaMax, 3), labels=[r'$0$', r'$\frac{\pi}{2}$', r'$\pi$'], fontsize=20)
-  ax.set_yticks(np.linspace(0, gammaMax, 3), labels=[r'$0$', r'$\pi$', r'$2\pi$'], fontsize=20)
+  ax.set_xticks(np.linspace(0, betaMax, 3), labels=[r'$0$', r'$\frac{\pi}{2}$', r'$\pi$'], fontsize=fontsize)
+  ax.set_yticks(np.linspace(0, gammaMax, 3), labels=[r'$0$', r'$\pi$', r'$2\pi$'], fontsize=fontsize)
   # ax.set_xticks([])
   # ax.set_yticks([])
 
@@ -130,9 +134,11 @@ def node_color_mapping(G, cut):
   color_map =[]
   for x in G.nodes():
     if cut[x] == '1' or cut[x] == 1:
-      color_map.append('red')
+      # color_map.append('red')
+      color_map.append('#ffd500')
     else:
-      color_map.append('#1f78b4')  # default networkx color
+      # color_map.append('#1f78b4')  # default networkx color
+      color_map.append('#6b00c2')  # default networkx color
   return color_map
 
 
@@ -150,11 +156,12 @@ def edge_color_mapping(G, cut):
   return edge_color
 
 
-def draw_graph_with_cut(G, cut, draw_labels=False, show=True):
-  edge_colors = edge_color_mapping(G, cut)
+def draw_graph_with_cut(G, cut, draw_labels=False, show=True, **kwargs):
   node_colors = node_color_mapping(G, cut)
-  plt.figure()
-  nx.draw_kamada_kawai(G, node_color=node_colors, edge_color=edge_colors, width=1.4, with_labels=draw_labels)
+  # edge_colors = edge_color_mapping(G, cut)
+  edge_colors = ['k']*len(G.edges)
+  
+  nx.draw_kamada_kawai(G, node_color=node_colors, edge_color=edge_colors, width=0.7, with_labels=draw_labels, **kwargs)
   if show: plt.show()
 
 

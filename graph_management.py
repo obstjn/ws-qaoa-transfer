@@ -123,6 +123,27 @@ def get_reg0_equivalent(G):
   return G_eq
 
 
+def get_equivalent_graph(G, central_edge=(0,1)):
+  G_eq = G.copy()
+  for node in G.nodes:
+    if G_eq.degree(node) == 2:
+      # Check if its only neighbors are central nodes
+      if central_edge[0] in G_eq.neighbors(node) and central_edge[1] in G_eq.neighbors(node):
+        G_eq = split_node(G_eq, node)
+
+  # add nodes if degree < 4
+  for i in central_edge:
+    while G_eq.degree(i) < 4:
+       n = len(G_eq)  # new node number
+       G_eq.add_edge(i, n, central=0)
+       G_eq.nodes[n]['weight'] = 0
+       G_eq.add_edge(i, n+1, central=0)
+       G_eq.nodes[n+1]['weight'] = 1
+
+  return G_eq
+
+
+
 def get_subgraphs(G):
   subgraphs = []
 
@@ -148,7 +169,7 @@ def get_subgraphs(G):
   return subgraphs
 
 
-def get_ws_subgraphs(G, apx_sol):
+def get_ws_subgraphs(G, apx_sol, get_equivalents=False):
   """ returns a tuple of (subgraph, relevant-edge, occurence) """
   subgraphs = []
 
@@ -176,6 +197,10 @@ def get_ws_subgraphs(G, apx_sol):
     # normalize labels
     subgraph = nx.convert_node_labels_to_integers(subgraph)
     inverted_sg = nx.convert_node_labels_to_integers(inverted_sg)
+
+    if get_equivalents:
+      subgraph = get_equivalent_graph(subgraph)
+      inverted_sg = get_equivalent_graph(inverted_sg)
 
     # iso check
     comp = lambda g1, g2: g1['weight'] == g2['weight']
@@ -285,3 +310,37 @@ def generate_graph(left_degree: int, right_degree: int, num_merged_nodes: int) -
     nx.convert_node_labels_to_integers(G)
 
     return G
+
+
+def is_iso(G1, G2, ws1=None, ws2=None):
+    # Prepare graphs
+    # Check if attributes are already set
+    if not G1.nodes[0]:
+      G1 = G1.copy()
+      attrs = {i: ws1[i] for i in G1.nodes}
+      nx.set_node_attributes(G1, attrs, 'weight')
+      # mark central edge
+      attrs = {e: 0 for e in G1.edges}
+      attrs[(0,1)] = 1
+      nx.set_edge_attributes(G1, attrs, 'central')
+
+    if not G2.nodes[0]:
+      G2 = G2.copy()
+      attrs = {i: ws2[i] for i in G2.nodes}
+      nx.set_node_attributes(G2, attrs, 'weight')
+      # mark central edge
+      attrs = {e: 0 for e in G2.edges}
+      attrs[(0,1)] = 1
+      nx.set_edge_attributes(G2, attrs, 'central')
+
+    G2_inverted = G2.copy()
+
+    # Graph with inverse ws
+    attrs_inv = {i: np.abs(ws2[i]-1) for i in G2_inverted.nodes}
+    nx.set_node_attributes(G2_inverted, attrs_inv, 'weight')
+
+    # iso check
+    comp = lambda g1, g2: g1['weight'] == g2['weight']
+    ecomp = lambda g1, g2: g1['central'] == g2['central']
+
+    return nx.is_isomorphic(G1, G2, node_match=comp, edge_match=ecomp) or nx.is_isomorphic(G1, G2_inverted, node_match=comp, edge_match=ecomp)

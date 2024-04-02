@@ -76,6 +76,7 @@ test_files.append(None)
 # reorder the files
 test_files = [test_files[i] for i in (0,2,3,-1,-1,7,-1,4,9,1,5,6)] 
 
-draw_multiple_landscapes_and_graphs(test_files, rows=3, cols=4)
+# draw_multiple_landscapes_and_graphs(test_files, rows=3, cols=4)
 
 plt.show()
+# plt.savefig('(3-3)-0-example.pdf')

@@ -19,12 +19,12 @@ def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=N
   else: 
     ax = axes
 
-  fontsize = 10
+  fontsize = 20
   ax.set_title(title, fontsize=fontsize)
 
   img = ax.imshow(energy_grid, cmap='inferno', origin='lower', extent=[0, betaMax, 0, gammaMax])
-  cbar = plt.colorbar(img, ax=ax, fraction=0.0458, pad=0.04)
-  cbar.ax.tick_params(labelsize=fontsize)
+  # cbar = plt.colorbar(img, ax=ax, fraction=0.0458, pad=0.04)
+  # cbar.ax.tick_params(labelsize=fontsize)
 
   ax.set_aspect(betaMax/gammaMax)
   # ax.set_xlabel(r'$\beta$')
@@ -46,7 +46,7 @@ def plot_energy(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, title=None, axes=N
   return img
 
 
-def plot_energy_with_marker(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, marker='max', title=None, filename=None, show=True, a=1.0):
+def plot_energy_with_marker(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, marker='max', title=None, axes=None, filename=None, show=True, a=1.0):
   thresh= a*energy_grid.max() + (1-a)*energy_grid.min() - 1e-5
   if marker == 'max':
     gam_idx, bet_idx = np.where((energy_grid >= thresh)) 
@@ -60,32 +60,26 @@ def plot_energy_with_marker(energy_grid, gammaMax=2*np.pi, betaMax=np.pi, marker
   gam *= 2*np.pi/energy_grid.shape[0]  # adjust scale
   bet *= 1*np.pi/energy_grid.shape[1]
 
-  fig, ax = plt.subplots()
+  if axes is None:
+    fig, ax = plt.subplots()
+  else: 
+    ax = axes
+
+  fontsize=10
   ax.set_title(title)
   vmin, vmax = .18, .94
   vmin, vmax = None, None  # relative color scale
   img = ax.imshow(energy_grid, cmap='inferno', vmin=vmin, vmax=vmax, origin='lower', extent=[0, betaMax, 0, gammaMax])
-  plt.colorbar(img)
-  plt.scatter(bet, gam, s=120, linewidths=2.0, facecolors='none', color='deepskyblue')
+  cbar = plt.colorbar(img, ax=ax, fraction=0.0458, pad=0.04)
+  cbar.ax.tick_params(labelsize=fontsize)
+  ax.scatter(bet, gam, s=120, linewidths=2.0, facecolors='none', color='deepskyblue')
   
-  # temp delete
-  #a= .8
-  #thresh= a*energy_grid.max() + (1-a)*energy_grid.min() - 1e-5
-  #gam_idx, bet_idx = np.where((energy_grid >= thresh)) 
-  #gam = gam_idx + .5  # add half a pixel
-  #bet = bet_idx + .5
-  #gam *= 2*np.pi/energy_grid.shape[0]  # adjust scale
-  #bet *= 1*np.pi/energy_grid.shape[1]
-  #plt.scatter(bet, gam, s=120, linewidths=2.0, facecolors='none', color='red')
-  ######
 
   ax.set_aspect(betaMax/gammaMax)
   ax.set_xlabel(r'$\beta$')
   ax.set_ylabel(r'$\gamma$')
-  plt.xticks(np.linspace(0, betaMax, 5))
-  plt.yticks(np.linspace(0, gammaMax, 5))
-  ax.xaxis.set_major_formatter(FormatStrFormatter('%.3g'))
-  ax.yaxis.set_major_formatter(FormatStrFormatter('%.3g'))
+  ax.set_xticks(np.linspace(0, betaMax, 3), labels=[r'$0$', r'$\frac{\pi}{2}$', r'$\pi$'], fontsize=fontsize)
+  ax.set_yticks(np.linspace(0, gammaMax, 3), labels=[r'$0$', r'$\pi$', r'$2\pi$'], fontsize=fontsize)
   if filename is not None:
     plt.savefig(f'{filename}_energy-landscape.pdf')#, dpi=300)
     plt.close()

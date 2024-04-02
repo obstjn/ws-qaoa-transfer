@@ -46,12 +46,16 @@ for sg, edge, occ in equivalents:
   grid = load_landscape_from_graph(sg)
   apx_energy_thresh += occ * grid
 
+# print(np.unravel_index(true_energy.argmax(), true_energy.shape))
+# print(np.unravel_index(apx_energy.argmax(), apx_energy.shape))
+# print(np.unravel_index(apx_energy_thresh.argmax(), apx_energy_thresh.shape))
+
 # plot_energy(apx_energy_thresh, show=False, title='Energy of Top 3')
 
 # plot_energy(true_energy - apx_energy, show=False, title='difference')
 
 
-fig = plt.figure(figsize=(7.166, 2.2))
+fig = plt.figure(figsize=(7.166, 1.75))  #(7.166, 2.2)
 # plt.subplots_adjust(left=0.07, right=0.94, top=1.0, bottom=0.05, wspace=0.6)  # column config
 plt.subplots_adjust(left=0.0, right=0.96, top=0.94, bottom=0.09, wspace=0.5)  # page config
 ax1 = fig.add_subplot(1, 4, 1)

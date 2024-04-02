@@ -32,7 +32,17 @@ for k in range(1):
 
 # Plot
 # draw_multiple_landscapes_and_graphs(files[2] , rows=1, cols=5, figsize=(7.166, 7.166/3))
-plt.savefig('(3-3)-0-landscapes.pdf')
+# plt.savefig('(3-3)-0-landscapes.pdf')
 
+# background axes object for plotting the vertical line
+fig = plt.gcf()
+ax =  fig.add_subplot()
+# set background color to transparent and turn off the frame
+ax.patch.set_alpha(0)
+ax.axis("off")
+# plot the vertical line
+ax.set_xlim([0, 1])
+ax.axvline(0.49, ymin=0.025, ymax=1, color='k', linestyle='dotted')
 # show
 # plt.show()
+plt.savefig('(3-3)-0-landscapes.pdf')

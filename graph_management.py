@@ -248,18 +248,7 @@ def get_relevant_warmstartings(G):
               iso_dict[ws_hash] = [ws]
           warmstartings.append(ws)
           
-  
-  # normalize
-  # normalized = []
-  # for ws in warmstartings:
-  #   if (ws[0] == 1 and ws[1] == 1) or (ws[0] == 0 and ws[1] == 1):
-  #     ws = np.abs(ws - 1)
-  #   normalized.append(ws)
-
-  # warmstartings = np.array(normalized)
-  warmstartings = np.array(warmstartings)
-
-  return warmstartings
+  return np.array(warmstartings)
 
 
 def generate_graph(left_degree: int, right_degree: int, num_merged_nodes: int) -> nx.Graph:

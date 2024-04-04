@@ -25,7 +25,7 @@ for (i,j) in pairs:
         # draw_graph_with_ws(G, show=False)
         # plt.get_current_fig_manager().canvas.set_window_title(f'({i+1}-{j+1})-{num_merged_nodes}')
         graphs.append(G)
-        nx.write_adjlist(G, f'./test-run/graphs/({i+1}-{j+1})-{num_merged_nodes}.graph')
+        nx.write_adjlist(G, f'./graphs/({i+1}-{j+1})-{num_merged_nodes}.graph')
 
 # plt.show()
 print(len(graphs))

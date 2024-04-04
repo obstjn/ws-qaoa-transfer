@@ -10,24 +10,24 @@ plt.rcParams.update({
 })
 
 # Load files
-grid_files = sorted(os.listdir('./test-run/energies'))
+grid_files = sorted(os.listdir('./energies'))
 
 # (3-3)-0 graphs
-files_0 = sorted(['./test-run/energies/' + f for f in grid_files if '(3-3)-0' in f])
+files_0 = sorted(['./energies/' + f for f in grid_files if '(3-3)-0' in f])
 # reorder the files
 files_0 = [files_0[i] for i in (0,1,4,5,3,10,9,6,11,2,8,7)] 
 # (3-3)-1 graphs
-files_1 = ['./test-run/energies/' + f for f in grid_files if '(3-3)-1' in f]
+files_1 = ['./energies/' + f for f in grid_files if '(3-3)-1' in f]
 # For reorder purposes add None
 files_1.append(None)
 # reorder the files
 files_1 = [files_1[i] for i in (0,2,3,-1,-1,7,-1,4,9,1,5,6)] 
 # (3-3)-2 graphs
-files_2 = ['./test-run/energies/' + f for f in grid_files if '(3-3)-2' in f]
+files_2 = ['./energies/' + f for f in grid_files if '(3-3)-2' in f]
 # reorder the files
 files_2 = [files_2 [i] for i in (0,1,4,3,2)] 
 
-files_1 = ['./test-run/energies/' + f for f in grid_files if '(3-3)-1' in f]
+files_1 = ['./energies/' + f for f in grid_files if '(3-3)-1' in f]
 node_split_files = [files_0[9], files_1[1], files_1[8], files_2[1]]
 
 # Plot

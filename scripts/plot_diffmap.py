@@ -10,8 +10,8 @@ from graph_management import *
 energy_grids = sorted(os.listdir('./energies/ordered'))
 n = len(energy_grids)
 
-transfer_map = np.load('./test-run/transferability-map.npy')
-diff_map = np.load('./test-run/diff-map.npy')
+transfer_map = np.load('./transferability-map.npy')
+diff_map = np.load('./diff-map.npy')
 
 # plotting
 # fig, ax = plt.subplots(figsize=(7.166, 5.95))
@@ -57,8 +57,6 @@ for j in range(1, 6):
     ax.axvline(x=location, color='white', linestyle='-', linewidth=0.7)
     ax.axhline(y=location, color='white', linestyle='-', linewidth=0.7)
 
-# xlabels = ['','','(1-$*$)','','', '','','(2-$*$)',''] + labels[9:]
-# ylabels = ['','','(1-$*$)','',''] + labels[5:]
 xlabels = ['(1-$*$)','','','','', '(2-$*$)','','',''] + labels[9:]
 ylabels = ['(1-$*$)','','','',''] + labels[5:]
 plt.xticks(ticks, xlabels)
@@ -66,6 +64,5 @@ plt.yticks(ticks, ylabels)
 ax.xaxis.tick_top()
 ax.xaxis.set_label_position('top')
 cbar.set_label('Transferability Coefficient', labelpad=-42)
-# plt.title('Transferability coefficients', fontsize='30', y=1.05)
 plt.savefig('transferability_map.pdf')
 # plt.show()

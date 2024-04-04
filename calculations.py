@@ -236,7 +236,17 @@ def get_graph_ws_and_grid(grid_path: str) -> Tuple[nx.Graph, np.ndarray, np.ndar
 
 
 def load_landscape_from_graph(G, path='./energies/'):
-  # TODO documentation
+  """
+  Loads landscape from graph by checking isomorphic graphs.
+
+  Parameters:
+  G (NetworkX Graph): Graph to load landscape from.
+  path (str): Path to the energies directory.
+
+  Returns: 
+  grid (numpy array): Energy grid/landscape of the graph.
+
+  """
   # (j-k)
   j = min(G.degree(0), G.degree(1))
   k = max(G.degree(0), G.degree(1))
@@ -249,7 +259,6 @@ def load_landscape_from_graph(G, path='./energies/'):
     G1, ws, grid = get_graph_ws_and_grid(path+file)
 
     # Prepare graphs
-    # apply apx_sol
     attrs = {i: ws[i] for i in G1.nodes}
     nx.set_node_attributes(G1, attrs, 'weight')
     # mark central edge

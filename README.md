@@ -1,5 +1,5 @@
 # Transferability Map
-### Setup (exemplary for ubuntu 18.04): 
+### Setup (exemplary for ubuntu): 
 * ``git clone https://github.com/obstjn/ws-qaoa-transfer.git``
 * ``cd ws-qaoa-transfer``
 * ``sudo -H pip install virtualenv`` (if you don't have virtualenv installed)
